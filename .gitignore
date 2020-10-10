@@ -8,6 +8,9 @@ Thumbs.db
 # VS Code
 .vscode/
 
+# IDEA
+.idea/
+
 # Vagrant
 .vagrant
 
@@ -60,6 +63,7 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
+unittests.xml
 *,cover
 .hypothesis/
 

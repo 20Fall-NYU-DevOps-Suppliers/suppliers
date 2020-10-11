@@ -67,13 +67,13 @@ Vagrant.configure(2) do |config|
   SHELL
 
   ######################################################################
-  # Add PostgreSQL docker container
+  # Add CouchDB docker container
   ######################################################################
-  # docker run -d --name postgres -p 5432:5432 -v psql_data:/var/lib/postgresql/data postgres
-  config.vm.provision :docker do |d|
-    d.pull_images "postgres:alpine"
-    d.run "postgres:alpine",
-       args: "-d --name postgres -p 5432:5432 -v psql_data:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres"
+  # docker run -d --name couchdb -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass -v couchdb-data:/opt/couchdb/data couchdb
+  config.vm.provision "docker" do |d|
+    d.pull_images "couchdb"
+    d.run "couchdb",
+      args: "--restart=always -d --name couchdb -p 5984:5984 -v couchdb:/opt/couchdb/data -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass"
   end
 
 end

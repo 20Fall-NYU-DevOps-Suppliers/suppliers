@@ -96,17 +96,7 @@ class Supplier(object):
         if document.exists():
             self.id = document['_id']
 
-
-    def update(self):
-        """ Updates a Supplier in the database """
-        try:
-            document = self.database[self.id]
-        except KeyError:
-            document = None
-        if document:
-            document.update(self.serialize())
-            document.save()
-    
+   
     def save(self):
         """ Saves a Supplier in the database """
         if self.name is None:   # name is the only required field

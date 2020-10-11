@@ -34,7 +34,7 @@ class TestSupplierServer(TestCase):
         service.data_load({"name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5})
     
 
-    def test_index(self):
+    def test_hello(self):
         """ Test the index page """
         resp = self.app.get('/')
         self.assertEqual(resp.status_code, HTTP_200_OK)

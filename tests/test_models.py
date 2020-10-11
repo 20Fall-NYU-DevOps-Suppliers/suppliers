@@ -142,13 +142,13 @@ class TestModels(TestCase):
         self.assertRaises(DataValidationError, supplier.deserialize, "string data")
     
     def test_save_a_supplier_with_no_name(self):
-        """ Save a Pet with no name """
-        supplier = Supplier(None, "cat")
+        """ Save a Supplier with no name """
+        supplier = Supplier(None, 2, True, [1,2,3], 8.5)
         self.assertRaises(DataValidationError, supplier.save)
 
     def test_create_a_supplier_with_no_name(self):
         """ Create a Suppleir with no name """
-        supplier = Supplier(None, "cat")
+        supplier = Supplier(None, 2, True, [1,2,3], 8.5)
         self.assertRaises(DataValidationError, supplier.create)
 
     

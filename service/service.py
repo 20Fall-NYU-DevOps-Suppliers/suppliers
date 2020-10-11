@@ -43,7 +43,7 @@ def create_suppliers():
     if request.headers.get('Content-Type') == 'application/x-www-form-urlencoded':
         app.logger.info('Getting data from form submit')
         data = {
-            # "id": request.form['id'],
+            "id": request.form['id'],
             "name": request.form['name'],
             "like_count": request.form['like_count'],
             "is_active": request.form['is_active'],

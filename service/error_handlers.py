@@ -25,7 +25,7 @@ def request_validation_error(error):
 
 @app.errorhandler(400)
 def bad_request(error):
-    """ Handles bad reuests with 400_BAD_REQUEST """
+    """ Handles bad requests with 400_BAD_REQUEST """
     message = str(error)
     app.logger.error(message)
     return make_response(jsonify(status=400, error='Bad Request', message=message), 400)

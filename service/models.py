@@ -96,7 +96,7 @@ class Supplier(object):
         if document.exists():
             self.id = document['_id']
 
-   
+
     def save(self):
         """ Saves a Supplier in the database """
         if self.name is None:   # name is the only required field
@@ -158,7 +158,7 @@ class Supplier(object):
     
     @classmethod
     def all(cls):
-        """ Query that returns all Pets """
+        """ Query that returns all Suppliers """
         results = []
         for doc in cls.database:
             supplier = Supplier().deserialize(doc)

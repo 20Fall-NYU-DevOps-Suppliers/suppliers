@@ -12,7 +12,9 @@ from flask import Flask
 
 # Create Flask application
 app = Flask(__name__)
-# app.config.from_object("config")
+
+# Load Configurations
+app.config.from_object('config')
 
 # Import the service After the Flask app is created
 from service import service, models
@@ -31,5 +33,7 @@ app.logger.info(70 * "*")
 app.logger.info("  S U P P L I E R S   S E R V I C E   R U N N I N G  ".center(70, "*"))
 print("  S U P P L I E R S   S E R V I C E   R U N N I N G  ")
 app.logger.info(70 * "*")
+
+app.logger.info('Service inititalized!')
 
 # TODO Initialize DB

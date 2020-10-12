@@ -79,6 +79,32 @@ class Supplier(object):
         self.is_active = is_active
         self.products = products
         self.rating = rating
+    
+    def create(self):
+        """
+        Creates a new Supplier in the database
+        """
+        if self.name is None:   # name is the only required field
+            raise DataValidationError('name attribute is not set')
+
+        try:
+            document = self.database.create_document(self.serialize())
+        except HTTPError as err:
+            Supplier.logger.warning('Create failed: %s', err)
+            return
+
+        if document.exists():
+            self.id = document['_id']
+
+
+    def save(self):
+        """ Saves a Supplier in the database """
+        if self.name is None:   # name is the only required field
+            raise DataValidationError('name attribute is not set')
+        if self.id:
+            self.update()
+        else:
+            self.create()
 
 
     def serialize(self):
@@ -123,12 +149,22 @@ class Supplier(object):
 ######################################################################
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
-
+    
     @classmethod
     def remove_all(cls):
         """ Removes all documents from the database (use for testing)  """
         for document in cls.database:
             document.delete()
+    
+    @classmethod
+    def all(cls):
+        """ Query that returns all Suppliers """
+        results = []
+        for doc in cls.database:
+            supplier = Supplier().deserialize(doc)
+            supplier.id = doc['_id']
+            results.append(supplier)
+        return results
 
 
 ############################################################

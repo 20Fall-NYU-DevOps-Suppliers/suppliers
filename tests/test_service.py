@@ -76,8 +76,6 @@ class TestSupplierServer(TestCase):
         # self.assertNotEqual(location, None)
         # Check the data is correct
         new_json = resp.get_json()
-        # print("#########after saved in the cloudant, the data becomes###############")
-        # print(new_json)
         self.assertEqual(new_json['name'], 'supplier1')
         self.assertEqual(new_json['like_count'], 2)
         self.assertEqual(new_json['products'], [1,2,3])

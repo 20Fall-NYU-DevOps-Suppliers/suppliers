@@ -70,8 +70,6 @@ def create_suppliers():
         check_content_type('application/json')
         app.logger.info('Getting json data from API call')
         data = request.get_json()
-        # print("##########################")
-        # print(data)
     app.logger.info(data)
     supplier = Supplier()
     supplier.deserialize(data)

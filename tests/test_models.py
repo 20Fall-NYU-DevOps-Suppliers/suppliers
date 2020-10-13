@@ -87,6 +87,21 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].products, [1,2,3])
         self.assertEqual(suppliers[0].rating, 8.5)
 
+    def test_update_a_supplier(self):
+        """ Update a Supplier """
+        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier.save()
+        self.assertNotEqual(supplier.id, None)
+        # Change it an save it
+        supplier.rating = 9.0
+        supplier.save()
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        suppliers = Supplier.all()
+        self.assertEqual(len(suppliers), 1)
+        self.assertEqual(suppliers[0].rating, 9.0)
+        self.assertEqual(suppliers[0].name, "supplier1")
+
 
 
     def test_serialize_a_supplier(self):

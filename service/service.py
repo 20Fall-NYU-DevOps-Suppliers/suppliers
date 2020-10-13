@@ -27,6 +27,22 @@ import service.error_handlers
 def hello():
     return "Hello Supplier!"
 
+######################################################################
+# RETRIEVE A SUPPLIER (READ)
+######################################################################
+@app.route('/suppliers/<supplier_id>', methods=['GET'])
+def get_suppliers(supplier_id):
+    """
+    Retrieve a single Supplier
+
+    This endpoint will return a Supplier based on it's id
+    """
+    app.logger.info("Request to Retrieve a supplier with id [%s]", supplier_id)
+    supplier = Supplier.find(supplier_id)
+    if not supplier:
+        raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+    return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 # CREATE A NEW SUPPLIER
@@ -43,7 +59,6 @@ def create_suppliers():
     if request.headers.get('Content-Type') == 'application/x-www-form-urlencoded':
         app.logger.info('Getting data from form submit')
         data = {
-            "id": request.form['id'],
             "name": request.form['name'],
             "like_count": request.form['like_count'],
             "is_active": request.form['is_active'],
@@ -60,10 +75,11 @@ def create_suppliers():
     supplier.save()
     app.logger.info('Supplier with new id [%s] saved!', supplier.id)
     message = supplier.serialize()
-    #location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    # TODO after finishing Query and add utility functions
+    # location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
     # return make_response(jsonify(message), status.HTTP_201_CREATED,
-    #                      {'Location': location_url})
+    #                       {'Location': location_url})
+    return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 
 

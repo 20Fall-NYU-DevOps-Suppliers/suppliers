@@ -38,6 +38,27 @@ class TestSupplierServer(TestCase):
         """ Test the index page """
         resp = self.app.get('/')
         self.assertEqual(resp.status_code, HTTP_200_OK)
+    
+
+    def test_get_supplier(self):
+        """ get a single Supplier """
+        test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
+        post_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json')
+        posted_data = post_resp.get_json()
+        resp = self.app.get(
+            "/suppliers/{}".format(posted_data['_id']), content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['name'], "supplier1")
+    
+    def test_get_supplier_not_found(self):
+        """ Get a Supplier that doesn't exist """
+        resp = self.app.get('/suppliers/0')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertIn('was not found', data['message'])
 
     def test_create_supplier(self):
         """ Create a new Supplier """
@@ -56,12 +77,16 @@ class TestSupplierServer(TestCase):
         # Check the data is correct
         new_json = resp.get_json()
         self.assertEqual(new_json['name'], 'supplier1')
+        self.assertEqual(new_json['like_count'], 2)
+        self.assertEqual(new_json['products'], [1,2,3])
+        self.assertEqual(new_json['rating'], 8.5)
+        self.assertEqual(new_json['is_active'], True)
         # check that count has gone up and includes supplier1
-        # TODO
         # resp = self.app.get('/suppliers')
         # data = resp.get_json()
         # logging.debug('data = %s', data)
         # self.assertEqual(resp.status_code, HTTP_200_OK)
+        # TODO after finishing List Service
         # self.assertEqual(len(data), supplier_count + 1)
         # self.assertIn(new_json, data)
     

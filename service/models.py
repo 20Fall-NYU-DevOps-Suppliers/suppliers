@@ -95,6 +95,16 @@ class Supplier(object):
 
         if document.exists():
             self.id = document['_id']
+    
+    def update(self):
+        """ Updates a Supplier in the database """
+        try:
+            document = self.database[self.id]
+        except KeyError:
+            document = None
+        if document:
+            document.update(self.serialize())
+            document.save()
 
 
     def save(self):
@@ -165,6 +175,19 @@ class Supplier(object):
             supplier.id = doc['_id']
             results.append(supplier)
         return results
+    
+######################################################################
+#  F I N D E R   M E T H O D S
+######################################################################
+
+    @classmethod
+    def find(cls, supplier_id):
+        """ Query that finds Suppliers by their id """
+        try:
+            document = cls.database[supplier_id]
+            return Supplier().deserialize(document)
+        except KeyError:
+            return None
 
 
 ############################################################

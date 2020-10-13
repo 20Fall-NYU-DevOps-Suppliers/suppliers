@@ -87,6 +87,21 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].products, [1,2,3])
         self.assertEqual(suppliers[0].rating, 8.5)
 
+    def test_update_a_supplier(self):
+        """ Update a Supplier """
+        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier.save()
+        self.assertNotEqual(supplier.id, None)
+        # Change it an save it
+        supplier.rating = 9.0
+        supplier.save()
+        # Fetch it back and make sure the id hasn't changed
+        # but the data did change
+        suppliers = Supplier.all()
+        self.assertEqual(len(suppliers), 1)
+        self.assertEqual(suppliers[0].rating, 9.0)
+        self.assertEqual(suppliers[0].name, "supplier1")
+
 
 
     def test_serialize_a_supplier(self):
@@ -150,6 +165,28 @@ class TestModels(TestCase):
         """ Create a Suppleir with no name """
         supplier = Supplier(None, 2, True, [1,2,3], 8.5)
         self.assertRaises(DataValidationError, supplier.create)
+    
+    def test_find_supplier(self):
+        """ Find a Supplier by id """
+        Supplier("supplier1", 2, True, [1,2,3], 8.5).save()
+        # saved_supplier = Supplier("kitty", "cat").save()
+        saved_supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        saved_supplier.save()
+        supplier = Supplier.find(saved_supplier.id)
+        self.assertIsNot(supplier, None)
+        self.assertEqual(supplier.id, saved_supplier.id)
+        self.assertEqual(supplier.name, "supplier1")
+    
+    def test_find_with_no_suppliers(self):
+        """ Find a Supplier with empty database """
+        supplier = Supplier.find("1")
+        self.assertIs(supplier, None)
+
+    def test_supplier_not_found(self):
+        """ Find a Supplier that doesnt exist """
+        Supplier("supplier1", 2, True, [1,2,3], 8.5).save()
+        supplier = Supplier.find("2")
+        self.assertIs(supplier, None)
 
     
     @patch('cloudant.database.CloudantDatabase.create_document')

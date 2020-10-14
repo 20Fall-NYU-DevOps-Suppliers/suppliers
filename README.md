@@ -14,7 +14,7 @@ The purpose of this project is to develop a suppliers system for an eCommerce we
  QUERY /suppliers/ - query the database by the name of the supplier   
  ACTION /suppliers/\<supplierId\>/like - increments the like_counter of a supplier 
 
-\<supplierID\> is a string of 24 hexadecimal characters eg: 4f4381f4e779897a2c000009
+\<supplierID\> is a string of 24 hexadecimal characters eg: 1e8392f4e6752990a2c23789
 
 ### Running Tests
 To run the TDD tests please run the following commands:

@@ -101,10 +101,6 @@ def like_supplier(supplier_id):
     supplier.save()
     app.logger.info('You liked supplier with id [%s]!', supplier.id)
     message = supplier.serialize()
-    # TODO after finishing Query and add utility functions
-    # location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
-    # return make_response(jsonify(message), status.HTTP_201_CREATED,
-    #                       {'Location': location_url})
     return make_response(jsonify(message), status.HTTP_200_OK)
 
 

@@ -8,7 +8,7 @@ GET /suppliers/{id} - Returns the Supplier with a given id number
 POST /suppliers - creates a new Supplier record in the database
 PUT /suppliers/{id} - updates a Supplier record in the database
 DELETE /suppliers/{id} - deletes a Supplier record in the database
-TODO Query and Action Paths
+ACTION /suppliers/{id}/like - increments the like count of the Supplier
 """
 
 import sys
@@ -25,6 +25,9 @@ import service.error_handlers
 
 @app.route('/')
 def hello():
+    """
+    Test the '/' path
+    """
     return "Hello Supplier!"
 
 ######################################################################
@@ -34,7 +37,6 @@ def hello():
 def get_suppliers(supplier_id):
     """
     Retrieve a single Supplier
-
     This endpoint will return a Supplier based on it's id
     """
     app.logger.info("Request to Retrieve a supplier with id [%s]", supplier_id)
@@ -83,6 +85,29 @@ def create_suppliers():
 
 
 
+######################################################################
+#  ACTION LIKE A SUPPLIER
+######################################################################
+@app.route('/suppliers/<supplier_id>/like', methods=['PUT'])
+def like_supplier(supplier_id):
+    """
+    Like a single Supplier
+    This endpoint will update the like_count of the Supplier based on it's id in the database
+    """
+    supplier = Supplier.find(supplier_id)
+    if not supplier:
+        raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+    supplier.like_count += 1
+    supplier.save()
+    app.logger.info('You liked supplier with id [%s]!', supplier.id)
+    message = supplier.serialize()
+    # TODO after finishing Query and add utility functions
+    # location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
+    # return make_response(jsonify(message), status.HTTP_201_CREATED,
+    #                       {'Location': location_url})
+    return make_response(jsonify(message), status.HTTP_200_OK)
+
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
@@ -97,7 +122,8 @@ def init_db(dbname="suppliers"):
 # load sample data
 def data_load(payload):
     """ Loads a Supplier into the database """
-    supplier = Supplier(payload['name'], payload['is_active'], payload['like_count'], payload['products'], payload['rating'])
+    supplier = Supplier(payload['name'], payload['is_active'],
+                        payload['like_count'], payload['products'], payload['rating'])
     supplier.save()
 
 def data_reset():
@@ -108,7 +134,8 @@ def check_content_type(content_type):
     """ Checks that the media type is correct """
     if 'Content-Type' not in request.headers:
         app.logger.error('No Content-Type specified.')
-        abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+        abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+              'Content-Type must be {}'.format(content_type))
 
     if request.headers['Content-Type'] == content_type:
         return

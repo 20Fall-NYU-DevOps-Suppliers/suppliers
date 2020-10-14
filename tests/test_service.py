@@ -107,6 +107,25 @@ class TestSupplierServer(TestCase):
         resp = self.app.post('/suppliers', data=data, content_type='plain/text')
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    
+    def test_like_supplier_non_found(self):
+        """ Like a Supplier that doesn't exist """
+        resp = self.app.put('/suppliers/0/like')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertIn('was not found', data['message'])
+
+    def test_like_supplier(self):
+        """ Like a Supplier """
+        test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
+        posted_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json') 
+        posted_data = posted_resp.get_json()
+        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'],content_type="application/json"))
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['like_count'], 3)
+
 ######################################################################
 # Utility functions
 ######################################################################

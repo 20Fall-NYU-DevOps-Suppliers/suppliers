@@ -7,14 +7,14 @@ The purpose of this project is to develop a suppliers system for an eCommerce we
  Seven paths:
  ------
  GET /suppliers - Returns a list all of the suppliers  
- GET /suppliers/\<string:supplierID\> - Returns the supplier with the given id  
+ GET /suppliers/\<supplierID\> - Returns the supplier with the given id  
  POST /suppliers - creates a new supplier record in the database  
- PUT /suppliers/\<string:supplierID\> - updates a supplier record in the database  
- DELETE /suppliers/\<string:supplierID\> - deletes a supplier record in the database  
+ PUT /suppliers/\<supplierID\> - updates a supplier record in the database  
+ DELETE /suppliers/\<supplierID\> - deletes a supplier record in the database  
  QUERY /suppliers/ - query the database by the name of the supplier   
- ACTION /suppliers/\<string:supplierId\>/like - increments the like_counter of a supplier 
+ ACTION /suppliers/\<supplierId\>/like - increments the like_counter of a supplier 
 
-\<string:supplierID\> is a string of 24 hexadecimal characters eg: 4f4381f4e779897a2c000009
+\<supplierID\> is a string of 24 hexadecimal characters eg: 4f4381f4e779897a2c000009
 
 ### Running Tests
 To run the TDD tests please run the following commands:

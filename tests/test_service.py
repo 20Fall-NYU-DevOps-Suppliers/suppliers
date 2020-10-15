@@ -106,7 +106,7 @@ class TestSupplierServer(TestCase):
         data = "wrong_content_type_test_words"
         resp = self.app.post('/suppliers', data=data, content_type='plain/text')
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-    
+        
     def test_update_supplier(self):
          
         test_supplier = {"id":1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
@@ -130,7 +130,6 @@ class TestSupplierServer(TestCase):
         logging.debug('data = %s', data)
         self.assertEqual(data['name'], 'supplier2')
     
-    
     def test_update_supplier_with_no_name(self): 
         new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating":8.5}
         
@@ -145,7 +144,6 @@ class TestSupplierServer(TestCase):
         del data['name']
         resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
-      
 
     def test_update_supplier_not_found(self):
         """Update a Supplier that does not exist"""
@@ -153,8 +151,25 @@ class TestSupplierServer(TestCase):
         resp = self.app.put('/suppliers/0', json=new_supplier, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
+    def test_like_supplier_non_found(self):
+        """ Like a Supplier that doesn't exist """
+        resp = self.app.put('/suppliers/0/like')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertIn('was not found', data['message'])
 
-####################################################:##################
+    def test_like_supplier(self):
+        """ Like a Supplier """
+        test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
+        posted_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json') 
+        posted_data = posted_resp.get_json()
+        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'],content_type="application/json"))
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['like_count'], 3)
+
+######################################################################
 # Utility functions
 ######################################################################
     def get_supplier(self, name):
@@ -172,4 +187,4 @@ class TestSupplierServer(TestCase):
 #   M A I N
 ######################################################################
 if __name__ == '__main__':
-    unittest.main() 
+    unittest.main()

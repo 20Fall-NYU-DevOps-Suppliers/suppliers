@@ -19,7 +19,7 @@ To use with Docker couchdb database use:
 """
 Attributes in a Supplier:
 -----------
-id (int) - the supplier Id
+id (string) - the supplier Id
 name (string) - the supplier name
 like_count (int) - the number of like given by customer
 is_active (boolean) - indicate whether the supplier is active or not

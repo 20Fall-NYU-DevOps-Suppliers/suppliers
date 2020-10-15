@@ -5,10 +5,11 @@ nosetests -v --with-spec --spec-color
 nosetests --stop tests/test_service.py:TestSupplierServer
 """
 
-from unittest import TestCase
+import unittest
 import logging
-from werkzeug.datastructures import MultiDict, ImmutableMultiDict
+from flask_api import status
 from service import service
+from .suppliers_factory import SupplierFactory
 
 # Status Codes
 HTTP_200_OK = 200
@@ -23,35 +24,55 @@ HTTP_415_UNSUPPORTED_MEDIA_TYPE = 415
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestSupplierServer(TestCase):
+class TestService(unittest.TestCase):
     """ Supplier Service tests """
+
 
     def setUp(self):
         self.app = service.app.test_client()
         service.initialize_logging(logging.INFO)
         service.init_db("test")
         service.data_reset()
-        service.data_load({"name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5})
-    
+
+
+    def _create_suppliers(self, count):
+        """ Factory method to create pets in bulk """
+        suppliers = []
+        for _ in range(count):
+            test_supplier = SupplierFactory()
+            resp = self.app.post(
+                "/suppliers", json=test_supplier.serialize(), content_type="application/json"
+            )
+            self.assertEqual(
+                resp.status_code, status.HTTP_201_CREATED, "Could not create test suppliers"
+            )
+            new_pet = resp.get_json()
+            test_supplier.id = new_pet["_id"]
+            suppliers.append(test_supplier)
+        return suppliers
+
 
     def test_hello(self):
         """ Test the index page """
         resp = self.app.get('/')
         self.assertEqual(resp.status_code, HTTP_200_OK)
-    
+
 
     def test_get_supplier(self):
         """ get a single Supplier """
-        test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
-        post_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json')
-        posted_data = post_resp.get_json()
+        test_supplier = self._create_suppliers(1)[0]
         resp = self.app.get(
-            "/suppliers/{}".format(posted_data['_id']), content_type="application/json"
+            "/suppliers/{}".format(test_supplier.id), content_type="application/json"
         )
-        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data['name'], "supplier1")
-    
+        self.assertEqual(data["name"], test_supplier.name)
+        self.assertEqual(data["like_count"], test_supplier.like_count)
+        self.assertEqual(data["is_active"], test_supplier.is_active)
+        self.assertEqual(data["products"], test_supplier.products)
+        self.assertEqual(data["rating"], test_supplier.rating)
+
+
     def test_get_supplier_not_found(self):
         """ Get a Supplier that doesn't exist """
         resp = self.app.get('/suppliers/0')
@@ -60,27 +81,19 @@ class TestSupplierServer(TestCase):
         logging.debug('data = %s', data)
         self.assertIn('was not found', data['message'])
 
+
     def test_create_supplier(self):
         """ Create a new Supplier """
-        # save the current number of suppliers for later comparrison
-        # supplier_count = self.get_supplier_count()
-        # add a new supplier
-        new_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
-        resp = self.app.post('/suppliers', json=new_supplier, content_type='application/json')
-        # if resp.status_code == 429: # rate limit exceeded
-        #     sleep(1)                # wait for 1 second and try again
-        #     resp = self.app.post('/suppliers', data=data, content_type='application/json')
+        new_supplier = SupplierFactory()
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
-        # Make sure location header is set
-        # location = resp.headers.get('Location', None)
-        # self.assertNotEqual(location, None)
-        # Check the data is correct
         new_json = resp.get_json()
-        self.assertEqual(new_json['name'], 'supplier1')
-        self.assertEqual(new_json['like_count'], 2)
-        self.assertEqual(new_json['products'], [1,2,3])
-        self.assertEqual(new_json['rating'], 8.5)
-        self.assertEqual(new_json['is_active'], True)
+        self.assertEqual(new_json['name'], new_supplier.name)
+        self.assertEqual(new_json['like_count'], new_supplier.like_count)
+        self.assertEqual(new_json['products'], new_supplier.products)
+        self.assertEqual(new_json['rating'], new_supplier.rating)
+        self.assertEqual(new_json['is_active'], new_supplier.is_active)
+
         # check that count has gone up and includes supplier1
         # resp = self.app.get('/suppliers')
         # data = resp.get_json()
@@ -89,17 +102,21 @@ class TestSupplierServer(TestCase):
         # TODO after finishing List Service
         # self.assertEqual(len(data), supplier_count + 1)
         # self.assertIn(new_json, data)
-    
+
+
     def test_create_supplier_with_no_name(self):
         """ Create a Supplier without a name """
-        new_supplier = {'products': [1,2,3], 'is_active': True, 'like_counts': 2, 'rating': 8.5}
-        resp = self.app.post('/suppliers', json=new_supplier, content_type='application/json')
+        new_supplier = SupplierFactory()
+        new_supplier.name = None
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
+
 
     def test_create_supplier_no_content_type(self):
         """ Create a Supplier with no Content-Type """
         resp = self.app.post('/suppliers', data="new_supplier")
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
 
     def test_create_supplier_wrong_content_type(self):
         """ Create a Supplier with wrong Content-Type """
@@ -116,22 +133,28 @@ class TestSupplierServer(TestCase):
         logging.debug('data = %s', data)
         self.assertIn('was not found', data['message'])
 
+
     def test_like_supplier(self):
         """ Like a Supplier """
-        test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
-        posted_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json') 
+        test_supplier = SupplierFactory()
+        posted_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
         posted_data = posted_resp.get_json()
-        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'],content_type="application/json"))
+        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'], content_type="application/json"))
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data['like_count'], 3)
+        self.assertEqual(data['like_count'], test_supplier.like_count+1)
+
 
 ######################################################################
 # Utility functions
 ######################################################################
+
+
 
 ######################################################################
 #   M A I N
 ######################################################################
 if __name__ == '__main__':
     unittest.main()
+    suite = unittest.TestLoader().loadTestsFromTestCase(TestService)
+    unittest.TextTestRunner(verbosity=2).run(suite)

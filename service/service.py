@@ -13,7 +13,7 @@ ACTION /suppliers/{id}/like - increments the like count of the Supplier
 
 import sys
 import logging
-from flask import jsonify, request, json, url_for, make_response, abort
+from flask import jsonify, request, make_response, abort
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Supplier
@@ -115,16 +115,11 @@ def init_db(dbname="suppliers"):
     """ Initlaize the model """
     Supplier.init_db(dbname)
 
-# load sample data
-def data_load(payload):
-    """ Loads a Supplier into the database """
-    supplier = Supplier(payload['name'], payload['is_active'],
-                        payload['like_count'], payload['products'], payload['rating'])
-    supplier.save()
 
 def data_reset():
     """ Removes all Suppliers from the database """
     Supplier.remove_all()
+
 
 def check_content_type(content_type):
     """ Checks that the media type is correct """
@@ -138,6 +133,7 @@ def check_content_type(content_type):
 
     app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+
 
 #@app.before_first_request
 def initialize_logging(log_level=app.config['LOGGING_LEVEL']):

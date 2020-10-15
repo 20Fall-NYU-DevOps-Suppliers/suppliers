@@ -145,23 +145,7 @@ class TestSupplierServer(TestCase):
         del data['name']
         resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
- 
-    """
-    def test_update_supplier_with_wrong_id(self):
-        new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating":8.5}
-
-        post_resp = self.app.post('/suppliers', json=new_supplier, content_type='application/json')
-        posted_data = post_resp.get_json()
-
-        resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-
-        data = resp.get_json()
-       
-        del data["like_count"]
-        resp = self.app.put('/suppliers/{}'.format(posted_data['_id']), json=data, content_type="application/json")
-        self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
-    """     
+      
 
     def test_update_supplier_not_found(self):
         """Update a Supplier that does not exist"""

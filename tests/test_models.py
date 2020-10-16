@@ -11,6 +11,7 @@ from unittest import TestCase
 from unittest.mock import patch
 from requests import HTTPError, ConnectionError
 from service.models import Supplier, DataValidationError, DatabaseConnectionError
+from .suppliers_factory import SupplierFactory
 
 
 VCAP_SERVICES = {
@@ -92,7 +93,6 @@ class TestModels(TestCase):
 
     def test_update_a_supplier(self):
         """ Update a Supplier """
-        #supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier = SupplierFactory()
         supplier.save()
         self.assertNotEqual(supplier.id, None)

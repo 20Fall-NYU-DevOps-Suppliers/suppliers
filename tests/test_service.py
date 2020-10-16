@@ -124,50 +124,6 @@ class TestService(unittest.TestCase):
         resp = self.app.post('/suppliers', data=data, content_type='plain/text')
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
         
-    def test_update_supplier(self):
-         
-        test_supplier = {"id":1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
-        self.assertEqual(test_supplier['name'], 'supplier1')
-
-        post_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json')
-        
-        posted_data = post_resp.get_json()
-        resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        data = resp.get_json()
-
-        data['name'] = 'supplier2'
- 
-        resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        
-        resp = self.app.get('/suppliers/{}'.format(data['_id']), content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        data = resp.get_json()
-        logging.debug('data = %s', data)
-        self.assertEqual(data['name'], 'supplier2')
-    
-    def test_update_supplier_with_no_name(self): 
-        new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating":8.5}
-        
-        post_resp = self.app.post('/suppliers', json=new_supplier, content_type='application/json')
-        posted_data = post_resp.get_json()
-        
-        resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-
-        data = resp.get_json()
-        
-        del data['name']
-        resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
-
-    def test_update_supplier_not_found(self):
-        """Update a Supplier that does not exist"""
-        new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
-        resp = self.app.put('/suppliers/0', json=new_supplier, content_type='application/json')
-        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
-
     def test_like_supplier_non_found(self):
         """ Like a Supplier that doesn't exist """
         resp = self.app.put('/suppliers/0/like')
@@ -190,9 +146,9 @@ class TestService(unittest.TestCase):
     def test_update_supplier(self):
         #test_supplier = {"id":1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
         test_supplier = SupplierFactory()
-        self.assertEqual(test_supplier['name'], 'supplier1')
+        #self.assertEqual(test_supplier['name'], 'supplier1')
 
-        post_resp = self.app.post('/suppliers', json=test_supplier, content_type='application/json')
+        post_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
         
         posted_data = post_resp.get_json()
         resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
@@ -214,7 +170,7 @@ class TestService(unittest.TestCase):
         #new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating":8.5}
         
         new_supplier = SupplierFactory()
-        post_resp = self.app.post('/suppliers', json=new_supplier, content_type='application/json')
+        post_resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         posted_data = post_resp.get_json()
         
         resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
@@ -231,24 +187,13 @@ class TestService(unittest.TestCase):
         """Update a Supplier that does not exist"""
         #new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
         new_supplier = SupplierFactory()
-        resp = self.app.put('/suppliers/0', json=new_supplier, content_type='application/json')
+        resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
       
 ######################################################################
 # Utility functions
 ######################################################################
-    def get_supplier(self, name):
-        """
-        Gets a supplier for use in other actions
-        """
-        resp = self.app.get('/suppliers', query_string='name={}'.format(name))
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        self.assertGreater(len(resp.data), 0)
-        data = resp.get_json()
-        logging.debug('data=%s', data)
-        return data
-
 
 
 ######################################################################

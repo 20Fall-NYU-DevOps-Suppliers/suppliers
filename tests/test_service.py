@@ -111,6 +111,20 @@ class TestService(unittest.TestCase):
             self.assertEqual(supplier['rating'], test_rating)
 
 
+    def test_query_by_product_id(self):
+        """ Query Suppliers by product id """
+        suppliers = self._create_suppliers(5)
+        test_product_id = suppliers[0].products[0]
+        all_suppliers = [supplier for supplier in suppliers if test_product_id in supplier.products]
+        resp = self.app.get("/suppliers", query_string="product_id={}".format(test_product_id))
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(all_suppliers))
+        # check the data just to be sure
+        for supplier in data:
+            self.assertIn(test_product_id, supplier['products'])
+
+
     def test_get_supplier(self):
         """ get a single Supplier """
         test_supplier = self._create_suppliers(1)[0]

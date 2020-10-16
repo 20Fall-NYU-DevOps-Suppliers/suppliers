@@ -113,18 +113,23 @@ def list_suppliers():
     name = request.args.get('name')
     is_active = request.args.get('is_active')
     rating = request.args.get('rating')
+    product_id = request.args.get('product_id')
 
     if name:
         app.logger.info('Find suppliers by name: %s', name)
         suppliers = Supplier.find_by_name(name)
     elif is_active:
-        is_active = request.args.get('is_active') == 'true'
         app.logger.info('Find suppliers by is_active: %s', is_active)
+        is_active = request.args.get('is_active') == 'true'
         suppliers = Supplier.find_by_is_active(is_active)
     elif rating:
-        rating = float(request.args.get('rating'))
         app.logger.info('Find suppliers by rating: %s', rating)
+        rating = float(request.args.get('rating'))
         suppliers = Supplier.find_by_rating(rating)
+    elif product_id:
+        app.logger.info('Find suppliers containing product with id %s in their products', product_id)
+        product_id = int(product_id)
+        suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
     else:
         app.logger.info('Find all suppliers')
         suppliers = Supplier.all()

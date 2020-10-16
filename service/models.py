@@ -100,6 +100,14 @@ class Supplier(object):
             document.update(self.serialize())
             document.save()
 
+    def delete(self):
+        """ Deletes a Supplier from the database"""
+        try:
+            document = self.database[self.id]
+        except KeyError:
+            document = None
+        if document:
+            document.delete()
 
     def save(self):
         """ Saves a Supplier in the database """

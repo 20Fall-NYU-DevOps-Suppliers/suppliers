@@ -153,12 +153,34 @@ class TestService(unittest.TestCase):
         data = resp.get_json()
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
 
+    def test_delete_supplier(self):
+        """ Delete a Supplier """
+        supplier = SupplierFactory()
+        posted_resp = self.app.post('/suppliers', json=supplier.serialize(), content_type='application/json')
+        
+        # save the current number of pets for later comparrison
+        supplier_count = self.get_supplier_count()
+       
+       # delete a pet 
+        posted_data = posted_resp.get_json()
+        resp = self.app.delete('/suppliers/{}'.format(posted_data['_id']), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_supplier_count()
+        self.assertEqual(new_count, supplier_count - 1) 
 
 
 ######################################################################
 # Utility functions
 ######################################################################
 
+    def get_supplier_count(self):
+        """ save the current number of suppliers """
+        resp = self.app.get('/suppliers')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        return len(data)
 
 
 ######################################################################

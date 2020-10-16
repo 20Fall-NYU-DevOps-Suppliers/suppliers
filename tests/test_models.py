@@ -11,6 +11,7 @@ from unittest import TestCase
 from unittest.mock import patch
 from requests import HTTPError, ConnectionError
 from service.models import Supplier, DataValidationError, DatabaseConnectionError
+from .suppliers_factory import SupplierFactory
 
 
 VCAP_SERVICES = {
@@ -104,7 +105,15 @@ class TestModels(TestCase):
         self.assertEqual(len(suppliers), 1)
         self.assertEqual(suppliers[0].rating, 9.0)
         self.assertEqual(suppliers[0].name, "supplier1")
-
+    
+    def test_delete_a_supplier(self):
+        """ Delete a Supplier """
+        supplier = SupplierFactory()
+        supplier.save()
+        self.assertEqual(len(Supplier.all()), 1)
+        # delete the supplier and make sure it isn't in the database
+        supplier.delete()
+        self.assertEqual(len(Supplier.all()), 0)
 
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """

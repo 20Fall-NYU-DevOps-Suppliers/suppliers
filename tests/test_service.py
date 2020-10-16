@@ -170,7 +170,6 @@ class TestService(unittest.TestCase):
         resp = self.app.get('/suppliers/{}'.format(data['_id']), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
-        logging.debug('data = %s', data)
         self.assertEqual(data['name'], 'supplier2')
       
     def test_update_supplier_with_no_name(self): 

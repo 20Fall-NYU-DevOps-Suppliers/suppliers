@@ -58,6 +58,15 @@ class TestService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
 
 
+    def test_list_suppliers(self):
+        """ Get a list of Suppliers """
+        self._create_suppliers(10)
+        resp = self.app.get('/suppliers')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 10)
+
+
     def test_get_supplier(self):
         """ get a single Supplier """
         test_supplier = self._create_suppliers(1)[0]
@@ -143,6 +152,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
+
 
 
 ######################################################################

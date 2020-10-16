@@ -84,6 +84,19 @@ def create_suppliers():
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 
+######################################################################
+# LIST ALL PETS
+######################################################################
+@app.route('/suppliers', methods=['GET'])
+def list_suppliers():
+    """ Returns all of the suppliers """
+    app.logger.info("Request for supplier list")
+    suppliers = Supplier.all()
+
+    results = [supplier.serialize() for supplier in suppliers]
+    app.logger.info("Returning %d suppliers", len(results))
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
 
 ######################################################################
 #  ACTION LIKE A SUPPLIER

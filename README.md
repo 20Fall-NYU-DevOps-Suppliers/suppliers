@@ -1,3 +1,6 @@
+
+# Suppliers
+# Suppliers team repo for 20Fall NYU DevOps
 # NYU DevOps Project - Suppliers
 
 ###  Project description
@@ -44,5 +47,3 @@ vagrant ssh
 cd /vagrant
 pylint --rcfile=pylint.conf service/*.py
 pylint --rcfile=pylint.conf tests/*.py
-````
-

@@ -93,7 +93,7 @@ class TestModels(TestCase):
 
     def test_update_a_supplier(self):
         """ Update a Supplier """
-        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
+        supplier = SupplierFactory()
         supplier.save()
         self.assertNotEqual(supplier.id, None)
         # Change it an save it
@@ -104,8 +104,8 @@ class TestModels(TestCase):
         suppliers = Supplier.all()
         self.assertEqual(len(suppliers), 1)
         self.assertEqual(suppliers[0].rating, 9.0)
-        self.assertEqual(suppliers[0].name, "supplier1")
-    
+        self.assertEqual(suppliers[0].name, supplier.name)
+
     def test_delete_a_supplier(self):
         """ Delete a Supplier """
         supplier = SupplierFactory()
@@ -113,7 +113,7 @@ class TestModels(TestCase):
         self.assertEqual(len(Supplier.all()), 1)
         # delete the supplier and make sure it isn't in the database
         supplier.delete()
-        self.assertEqual(len(Supplier.all()), 0)
+        self.assertEqual(len(Supplier.all()), 0)      
 
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """
@@ -253,3 +253,5 @@ class TestModels(TestCase):
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)
+
+

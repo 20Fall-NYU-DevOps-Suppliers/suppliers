@@ -196,6 +196,46 @@ class TestModels(TestCase):
         self.assertIs(supplier, None)
 
 
+    def test_find_by_name(self):
+        """ Find a Supplier by Name """
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
+        Supplier("supplier2", 4, False, [1, 3, 5, 7], 6.5).save()
+        suppliers = Supplier.find_by_name("supplier1")
+        self.assertNotEqual(len(suppliers), 0)
+        self.assertEqual(suppliers[0].name, "supplier1")
+        self.assertEqual(suppliers[0].like_count, 2)
+        self.assertEqual(suppliers[0].is_active, True)
+        self.assertEqual(len(suppliers[0].products), 3)
+        self.assertEqual(suppliers[0].rating, 8.5)
+
+
+    def test_find_by_is_active(self):
+        """ Find a Supplier by is_active """
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
+        Supplier("supplier2", 4, False, [1, 3, 5, 7], 6.5).save()
+        suppliers = Supplier.find_by_is_active(True)
+        self.assertNotEqual(len(suppliers), 0)
+        self.assertEqual(suppliers[0].name, "supplier1")
+        self.assertEqual(suppliers[0].like_count, 2)
+        self.assertEqual(suppliers[0].is_active, True)
+        self.assertEqual(len(suppliers[0].products), 3)
+        self.assertEqual(suppliers[0].rating, 8.5)
+
+
+    def test_find_by_rating(self):
+        """ Find a Supplier by Rating """
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
+        Supplier("supplier2", 4, False, [1, 3, 5, 7], 6.5).save()
+        suppliers = Supplier.find_by_rating(8.5)
+        self.assertNotEqual(len(suppliers), 0)
+        self.assertEqual(suppliers[0].name, "supplier1")
+        self.assertEqual(suppliers[0].like_count, 2)
+        self.assertEqual(suppliers[0].is_active, True)
+        self.assertEqual(len(suppliers[0].products), 3)
+        self.assertEqual(suppliers[0].rating, 8.5)
+
+
     @patch('cloudant.database.CloudantDatabase.create_document')
     def test_http_error(self, bad_mock):
         """ Test a Bad Create with HTTP error """

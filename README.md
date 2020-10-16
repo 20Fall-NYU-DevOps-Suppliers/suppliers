@@ -1,7 +1,10 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # Suppliers
 Suppliers team repo for 20Fall NYU DevOps
 =======
+=======
+>>>>>>> ae6cfa05c5f7b48c1900a06dae050f1480ace164
 # NYU DevOps Project - Suppliers
 
 ###  Project description
@@ -48,6 +51,10 @@ vagrant ssh
 cd /vagrant
 pylint --rcfile=pylint.conf service/*.py
 pylint --rcfile=pylint.conf tests/*.py
+<<<<<<< HEAD
 ````
 
 >>>>>>> master
+=======
+````
+>>>>>>> ae6cfa05c5f7b48c1900a06dae050f1480ace164

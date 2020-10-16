@@ -83,10 +83,10 @@ def create_suppliers():
     #                       {'Location': location_url})
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
+######################################################################
+# UPDATE A SUPPLIER
+######################################################################
 
-######################################################################^M
-# UPDATE A SUPPLIER^M
-######################################################################^M
 @app.route('/suppliers/<supplier_id>', methods=['PUT'])
 def update_suppliers(supplier_id):
     """
@@ -104,7 +104,6 @@ def update_suppliers(supplier_id):
     supplier.id = supplier_id
     supplier.save()
     return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
-
 
 ######################################################################
 #  ACTION LIKE A SUPPLIER

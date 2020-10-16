@@ -8,7 +8,7 @@ nosetests --stop tests/test_models.py:TestModels
 import os
 import json
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 from requests import HTTPError, ConnectionError
 from service.models import Supplier, DataValidationError, DatabaseConnectionError
 
@@ -56,24 +56,26 @@ class TestModels(TestCase):
         """ Test Connection error handler """
         bad_mock.side_effect = ConnectionError()
         self.assertRaises(DatabaseConnectionError, Supplier.init_db, "test")
-    
+
+
     def test_create_a_supplier(self):
         """ Create a supplier and assert that it exists """
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier.id = 1
         self.assertNotEqual(supplier, None)
         self.assertEqual(supplier.id, 1)
         self.assertEqual(supplier.name, "supplier1")
         self.assertEqual(supplier.like_count, 2)
         self.assertEqual(supplier.is_active, True)
-        self.assertEqual(supplier.products, [1,2,3])
+        self.assertEqual(supplier.products, [1, 2, 3])
         self.assertEqual(supplier.rating, 8.5)
-    
+
+
     def test_add_a_supplier(self):
         """ Create a supplier and add it to the database """
         suppliers = Supplier.all()
         self.assertEqual(suppliers, [])
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         self.assertNotEqual(supplier, None)
         self.assertEqual(supplier.id, None)
         supplier.save()
@@ -84,12 +86,13 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].name, "supplier1")
         self.assertEqual(suppliers[0].like_count, 2)
         self.assertEqual(suppliers[0].is_active, True)
-        self.assertEqual(suppliers[0].products, [1,2,3])
+        self.assertEqual(suppliers[0].products, [1, 2, 3])
         self.assertEqual(suppliers[0].rating, 8.5)
+
 
     def test_update_a_supplier(self):
         """ Update a Supplier """
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier.save()
         self.assertNotEqual(supplier.id, None)
         # Change it an save it
@@ -103,10 +106,9 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].name, "supplier1")
 
 
-
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier.id = 1
         data = supplier.serialize()
         self.assertNotEqual(data, None)
@@ -119,14 +121,14 @@ class TestModels(TestCase):
         self.assertIn('is_active', data)
         self.assertEqual(data['is_active'], True)
         self.assertIn('products', data)
-        self.assertEqual(data['products'], [1,2,3])
+        self.assertEqual(data['products'], [1, 2, 3])
         self.assertIn('rating', data)
         self.assertEqual(data['rating'], 8.5)
 
 
     def test_deserialize_a_supplier(self):
         """ Deserialize a Supplier """
-        data = {"_id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
+        data = {"_id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1, 2, 3], "rating": 8.5}
         supplier = Supplier()
         supplier.deserialize(data)
         self.assertNotEqual(supplier, None)
@@ -134,13 +136,13 @@ class TestModels(TestCase):
         self.assertEqual(supplier.name, "supplier1")
         self.assertEqual(supplier.like_count, 2)
         self.assertEqual(supplier.is_active, True)
-        self.assertEqual(supplier.products, [1,2,3])
+        self.assertEqual(supplier.products, [1, 2, 3])
         self.assertEqual(supplier.rating, 8.5)
 
 
     def test_deserialize_with_no_name(self):
         """ Deserialize a Supplier that has no name """
-        data = {"like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
+        data = {"like_count": 2, "is_active": True, "products": [1, 2, 3], "rating": 8.5}
         supplier = Supplier()
         self.assertRaises(DataValidationError, supplier.deserialize, data)
 
@@ -155,61 +157,62 @@ class TestModels(TestCase):
         """ Deserialize a Supplier that has bad data """
         supplier = Supplier()
         self.assertRaises(DataValidationError, supplier.deserialize, "string data")
-    
+
+
     def test_save_a_supplier_with_no_name(self):
         """ Save a Supplier with no name """
-        supplier = Supplier(None, 2, True, [1,2,3], 8.5)
+        supplier = Supplier(None, 2, True, [1, 2, 3], 8.5)
         self.assertRaises(DataValidationError, supplier.save)
+
 
     def test_create_a_supplier_with_no_name(self):
         """ Create a Suppleir with no name """
-        supplier = Supplier(None, 2, True, [1,2,3], 8.5)
+        supplier = Supplier(None, 2, True, [1, 2, 3], 8.5)
         self.assertRaises(DataValidationError, supplier.create)
-    
+
+
     def test_find_supplier(self):
         """ Find a Supplier by id """
-        Supplier("supplier1", 2, True, [1,2,3], 8.5).save()
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
         # saved_supplier = Supplier("kitty", "cat").save()
-        saved_supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        saved_supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         saved_supplier.save()
         supplier = Supplier.find(saved_supplier.id)
         self.assertIsNot(supplier, None)
         self.assertEqual(supplier.id, saved_supplier.id)
         self.assertEqual(supplier.name, "supplier1")
-    
+
+
     def test_find_with_no_suppliers(self):
         """ Find a Supplier with empty database """
         supplier = Supplier.find("1")
         self.assertIs(supplier, None)
 
+
     def test_supplier_not_found(self):
         """ Find a Supplier that doesnt exist """
-        Supplier("supplier1", 2, True, [1,2,3], 8.5).save()
+        Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
         supplier = Supplier.find("2")
         self.assertIs(supplier, None)
 
-    
+
     @patch('cloudant.database.CloudantDatabase.create_document')
     def test_http_error(self, bad_mock):
         """ Test a Bad Create with HTTP error """
         bad_mock.side_effect = HTTPError()
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier.create()
         self.assertIsNone(supplier.id)
+
 
     @patch('cloudant.document.Document.exists')
     def test_document_not_exist(self, bad_mock):
         """ Test a Bad Document Exists """
         bad_mock.return_value = False
-        supplier = Supplier("supplier1", 2, True, [1,2,3], 8.5)
+        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
         supplier.create()
         self.assertIsNone(supplier.id)
 
-    @patch('cloudant.client.Cloudant.__init__')
-    def test_connection_error(self, bad_mock):
-        """ Test Connection error handler """
-        bad_mock.side_effect = ConnectionError()
-        self.assertRaises(DatabaseConnectionError, Supplier.init_db, 'test')
 
     @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
     def test_vcap_services(self):
@@ -236,7 +239,7 @@ class TestModels(TestCase):
 
 
     @patch.dict(os.environ, {'BINDING_CLOUDANT': json.dumps(BINDING_CLOUDANT)})
-    def test_vcap_no_services(self):
+    def test_vcap_no_services2(self):
         """ Test BINDING_CLOUDANT """
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)

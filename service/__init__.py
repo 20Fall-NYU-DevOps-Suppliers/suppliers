@@ -1,12 +1,10 @@
-from flask import Flask
-
 
 """
 Package: app
 Package for the application models and services
 This module also sets up the logging
 """
-import os
+
 import logging
 from flask import Flask
 
@@ -31,9 +29,6 @@ if __name__ != "__main__":
 
 app.logger.info(70 * "*")
 app.logger.info("  S U P P L I E R S   S E R V I C E   R U N N I N G  ".center(70, "*"))
-print("  S U P P L I E R S   S E R V I C E   R U N N I N G  ")
 app.logger.info(70 * "*")
 
 app.logger.info('Service inititalized!')
-
-# TODO Initialize DB

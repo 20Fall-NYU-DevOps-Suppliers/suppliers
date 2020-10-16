@@ -91,8 +91,24 @@ def create_suppliers():
 def list_suppliers():
     """ Returns all of the suppliers """
     app.logger.info("Request for supplier list")
-    suppliers = Supplier.all()
+    supplier = []
+    name = request.args.get('name')
+    is_active = request.args.get('is_active')
+    rating = request.args.get('rating')
+    if name:
+        app.logger.info('Find suppliers by name: %s', name)
+        supplier = Supplier.find_by_name(name)
+    elif is_active:
+        app.logger.info('Find suppliers by is_active: %s', is_active)
+        supplier = Supplier.find_by_is_active(is_active)
+    elif rating:
+        app.logger.info('Find suppliers by rating: %s', rating)
+        supplier = Supplier.find_by_rating(rating)
+    else:
+        app.logger.info('Find all suppliers')
+        suppliers = Supplier.all()
 
+    app.logger.info('[%s] Suppliers returned', len(supplier))
     results = [supplier.serialize() for supplier in suppliers]
     app.logger.info("Returning %d suppliers", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)

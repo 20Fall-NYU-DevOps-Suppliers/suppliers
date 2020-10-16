@@ -62,7 +62,7 @@ class TestService(unittest.TestCase):
         """ Get a list of Suppliers """
         resp = self.app.get('/suppliers')
         self.assertEqual(resp.status_code, HTTP_200_OK)
-        self.assertIn(len(resp.data) > 0)
+        self.assertTrue(len(resp.data) > 0)
 
 
     def test_get_supplier(self):

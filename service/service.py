@@ -8,12 +8,12 @@ GET /suppliers/{id} - Returns the Supplier with a given id number
 POST /suppliers - creates a new Supplier record in the database
 PUT /suppliers/{id} - updates a Supplier record in the database
 DELETE /suppliers/{id} - deletes a Supplier record in the database
-TODO Query and Action Paths
+ACTION /suppliers/{id}/like - increments the like count of the Supplier
 """
 
 import sys
 import logging
-from flask import jsonify, request, json, url_for, make_response, abort
+from flask import jsonify, request, make_response, abort
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Supplier
@@ -25,6 +25,9 @@ import service.error_handlers
 
 @app.route('/')
 def hello():
+    """
+    Test the '/' path
+    """
     return "Hello Supplier!"
 
 ######################################################################
@@ -34,7 +37,6 @@ def hello():
 def get_suppliers(supplier_id):
     """
     Retrieve a single Supplier
-
     This endpoint will return a Supplier based on it's id
     """
     app.logger.info("Request to Retrieve a supplier with id [%s]", supplier_id)
@@ -82,9 +84,9 @@ def create_suppliers():
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 
-######################################################################
-# UPDATE A SUPPLIER
-######################################################################
+######################################################################^M
+# UPDATE A SUPPLIER^M
+######################################################################^M
 @app.route('/suppliers/<supplier_id>', methods=['PUT'])
 def update_suppliers(supplier_id):
     """
@@ -103,6 +105,27 @@ def update_suppliers(supplier_id):
     supplier.save()
     return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
+
+######################################################################
+#  ACTION LIKE A SUPPLIER
+######################################################################
+@app.route('/suppliers/<supplier_id>/like', methods=['PUT'])
+def like_supplier(supplier_id):
+    """
+    Like a single Supplier
+    This endpoint will update the like_count of the Supplier based on it's id in the database
+    """
+    supplier = Supplier.find(supplier_id)
+    if not supplier:
+        raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+    supplier.like_count += 1
+    supplier.save()
+    app.logger.info('You liked supplier with id [%s]!', supplier.id)
+    message = supplier.serialize()
+    return make_response(jsonify(message), status.HTTP_200_OK)
+
+
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
@@ -113,27 +136,25 @@ def init_db(dbname="suppliers"):
     """ Initlaize the model """
     Supplier.init_db(dbname)
 
-# load sample data
-def data_load(payload):
-    """ Loads a Supplier into the database """
-    supplier = Supplier(payload['name'], payload['is_active'], payload['like_count'], payload['products'], payload['rating'])
-    supplier.save()
 
 def data_reset():
     """ Removes all Suppliers from the database """
     Supplier.remove_all()
 
+
 def check_content_type(content_type):
     """ Checks that the media type is correct """
     if 'Content-Type' not in request.headers:
         app.logger.error('No Content-Type specified.')
-        abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+        abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+              'Content-Type must be {}'.format(content_type))
 
     if request.headers['Content-Type'] == content_type:
         return
 
     app.logger.error('Invalid Content-Type: %s', request.headers['Content-Type'])
     abort(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE, 'Content-Type must be {}'.format(content_type))
+
 
 #@app.before_first_request
 def initialize_logging(log_level=app.config['LOGGING_LEVEL']):

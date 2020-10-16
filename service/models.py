@@ -1,10 +1,8 @@
 """
 Model file that defines the data schema for suppliers and related eddatabase operations
-"""
-
-"""
+----------------------------------------
 Supplier Model is defined using Cloudant
-
+----------------------------------------
 You must initlaize this class before use by calling inititlize().
 This class looks for an environment variable called VCAP_SERVICES
 to get it's database credentials from. If it cannot find one, it
@@ -13,26 +11,22 @@ for a server name 'cloudant' to connect to.
 
 To use with Docker couchdb database use:
     docker run -d --name couchdb -p 5984:5984 -e COUCHDB_USER=admin -e COUCHDB_PASSWORD=pass couchdb
-"""
 
-
-"""
-Attributes in a Supplier:
------------
-id (int) - the supplier Id
+------------------------
+Attributes in a Supplier
+------------------------
+id (string) - the supplier Id
 name (string) - the supplier name
 like_count (int) - the number of like given by customer
 is_active (boolean) - indicate whether the supplier is active or not
 products (list of int) - a list of product id provied by this supplier
 rating (float) - average rating given by customer, 0-10 (eg 7.8)
-
 """
 
 import os
 import json
 import logging
 from cloudant.client import Cloudant
-from cloudant.query import Query
 from cloudant.adapters import Replay429Adapter
 from requests import HTTPError, ConnectionError
 
@@ -79,7 +73,7 @@ class Supplier(object):
         self.is_active = is_active
         self.products = products
         self.rating = rating
-    
+
     def create(self):
         """
         Creates a new Supplier in the database
@@ -90,12 +84,12 @@ class Supplier(object):
         try:
             document = self.database.create_document(self.serialize())
         except HTTPError as err:
-            Supplier.logger.warning('Create failed: %s', err)
+            Supplier.logger.info('Create failed: %s', err)
             return
 
         if document.exists():
             self.id = document['_id']
-    
+
     def update(self):
         """ Updates a Supplier in the database """
         try:
@@ -159,13 +153,13 @@ class Supplier(object):
 ######################################################################
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
-    
+
     @classmethod
     def remove_all(cls):
         """ Removes all documents from the database (use for testing)  """
         for document in cls.database:
             document.delete()
-    
+
     @classmethod
     def all(cls):
         """ Query that returns all Suppliers """
@@ -175,7 +169,7 @@ class Supplier(object):
             supplier.id = doc['_id']
             results.append(supplier)
         return results
-    
+
 ######################################################################
 #  F I N D E R   M E T H O D S
 ######################################################################
@@ -235,13 +229,13 @@ class Supplier(object):
             if ADMIN_PARTY:
                 Supplier.logger.info('Running in Admin Party Mode...')
             Supplier.client = Cloudant(opts['username'],
-                                  opts['password'],
-                                  url=opts['url'],
-                                  connect=True,
-                                  auto_renew=True,
-                                  admin_party=ADMIN_PARTY,
-                                  adapter=Replay429Adapter(retries=10, initialBackoff=0.01)
-                                 )
+                                       opts['password'],
+                                       url=opts['url'],
+                                       connect=True,
+                                       auto_renew=True,
+                                       admin_party=ADMIN_PARTY,
+                                       adapter=Replay429Adapter(retries=10, initialBackoff=0.01)
+                                      )
 
         except ConnectionError:
             raise DatabaseConnectionError('Cloudant service could not be reached')

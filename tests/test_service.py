@@ -172,6 +172,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
 
     def test_update_supplier(self):
+        """ Update a Supplier """
         test_supplier = SupplierFactory()
 
         post_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
@@ -192,6 +193,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['name'], 'supplier2')
       
     def test_update_supplier_with_no_name(self): 
+        """ Update a Supplier without assigning a name """
         new_supplier = SupplierFactory()
         post_resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         posted_data = post_resp.get_json()
@@ -212,22 +214,25 @@ class TestService(unittest.TestCase):
         resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
-      
+    def test_delete_supplier(self):
+        """ Delete a Supplier """
+        supplier = SupplierFactory()
+        posted_resp = self.app.post('/suppliers', json=supplier.serialize(), content_type='application/json')
+        
+        # save the current number of suppliers for later comparrison
+        supplier_count = self.get_supplier_count()
+       
+       # delete a supplier
+        posted_data = posted_resp.get_json()
+        resp = self.app.delete('/suppliers/{}'.format(posted_data['_id']), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_supplier_count()
+        self.assertEqual(new_count, supplier_count - 1)  
 
 ######################################################################
 # Utility functions
 ######################################################################
-
-    def get_supplier(self, name):
-        """ retrieves a supplier for use in other actions """
-        resp = self.app.get('/suppliers',
-                            query_string='name={}'.format(name))
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        self.assertGreater(len(resp.data), 0)
-        data = resp.get_json()
-        logging.debug('data = %s', data)
-        return data
-
     def get_supplier_count(self):
         """ save the current number of suppliers """
         resp = self.app.get('/suppliers')
@@ -235,7 +240,7 @@ class TestService(unittest.TestCase):
         data = resp.get_json()
         logging.debug('data = %s', data)
         return len(data)
-
+      
 ######################################################################
 #   M A I N
 ######################################################################
@@ -243,5 +248,3 @@ if __name__ == '__main__':
     unittest.main()
     suite = unittest.TestLoader().loadTestsFromTestCase(TestService)
     unittest.TextTestRunner(verbosity=2).run(suite)
-
-

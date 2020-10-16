@@ -64,6 +64,7 @@ class Supplier(object):
     client = None   # cloudant.client.Cloudant
     database = None # cloudant.database.CloudantDatabase
 
+
     def __init__(self, name=None, like_count=None, is_active=True, products=None, rating=None):
         """ Constructor """
         if products is None:
@@ -74,6 +75,7 @@ class Supplier(object):
         self.is_active = is_active
         self.products = products
         self.rating = rating
+
 
     def create(self):
         """
@@ -91,6 +93,7 @@ class Supplier(object):
         if document.exists():
             self.id = document['_id']
 
+
     def update(self):
         """ Updates a Supplier in the database """
         try:
@@ -101,6 +104,7 @@ class Supplier(object):
             document.update(self.serialize())
             document.save()
 
+
     def delete(self):
         """ Deletes a Supplier from the database"""
         try:
@@ -109,6 +113,7 @@ class Supplier(object):
             document = None
         if document:
             document.delete()
+
 
     def save(self):
         """ Saves a Supplier in the database """
@@ -163,11 +168,13 @@ class Supplier(object):
 #  S T A T I C   D A T A B S E   M E T H O D S
 ######################################################################
 
+
     @classmethod
     def remove_all(cls):
         """ Removes all documents from the database (use for testing)  """
         for document in cls.database:
             document.delete()
+
 
     @classmethod
     def all(cls):
@@ -179,9 +186,11 @@ class Supplier(object):
             results.append(supplier)
         return results
 
+
 ######################################################################
 #  F I N D E R   M E T H O D S
 ######################################################################
+
 
     @classmethod
     def find(cls, supplier_id):
@@ -192,9 +201,21 @@ class Supplier(object):
         except KeyError:
             return None
 
-    
+
     @classmethod
-    def find_by(cls, **kwargs):
+    def find_by_greater(cls, field: str, limit):
+        """ Find records using selector """
+        query = Query(cls.database, selector={field: {'$gt': limit}})
+        results = []
+        for doc in query.result:
+            supplier = Supplier()
+            supplier.deserialize(doc)
+            results.append(supplier)
+        return results
+
+
+    @classmethod
+    def find_by_equal(cls, **kwargs):
         """ Find records using selector """
         query = Query(cls.database, selector=kwargs)
         results = []
@@ -204,20 +225,17 @@ class Supplier(object):
             results.append(supplier)
         return results
 
+
     @classmethod
     def find_by_name(cls, name):
         """ Query that finds Suppliers by their name """
-        return cls.find_by(name=name)
+        return cls.find_by_equal(name=name)
+
 
     @classmethod
     def find_by_is_active(cls, is_active):
         """ Query that finds Suppliers by their active status """
-        return cls.find_by(is_active=is_active)
-
-    @classmethod
-    def find_by_rating(cls, rating):
-        """ Query that finds Suppliers by their rating """
-        return cls.find_by(rating=rating)
+        return cls.find_by_equal(is_active=is_active)
 
 
 ############################################################

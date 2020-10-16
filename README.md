@@ -4,8 +4,8 @@
 The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology.
 
 ### Features supported
- Seven paths:
- ------
+
+ **Seven paths：**  
  GET /suppliers - Returns a list all of the suppliers  
  GET /suppliers/\<supplierID\> - Returns the supplier with the given id  
  POST /suppliers - creates a new supplier record in the database  

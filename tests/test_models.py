@@ -113,7 +113,7 @@ class TestModels(TestCase):
         self.assertEqual(len(Supplier.all()), 1)
         # delete the supplier and make sure it isn't in the database
         supplier.delete()
-        self.assertEqual(len(Supplier.all()), 0)      
+        self.assertEqual(len(Supplier.all()), 0)
 
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """
@@ -235,12 +235,20 @@ class TestModels(TestCase):
         """ Find a Supplier by Rating """
         Supplier("supplier1", 2, True, [1, 2, 3], 8.5).save()
         Supplier("supplier2", 4, False, [1, 3, 5, 7], 6.5).save()
-        suppliers = Supplier.find_by_rating(8.5)
+        Supplier("supplier3", 6, False, [1, 3, 5], 7.2).save()
+        Supplier("supplier4", 8, True, [1, 2, 5], 4.5).save()
+        suppliers = Supplier.find_by_greater("rating", 4.2)
+        self.assertEqual(len(suppliers), 4)
+        suppliers = Supplier.find_by_greater("rating", 7)
+        self.assertEqual(len(suppliers), 2)
+        suppliers = Supplier.find_by_greater("rating", 8.6)
+        self.assertEqual(len(suppliers), 0)
+        suppliers = Supplier.find_by_greater("rating", 7.2)
         self.assertEqual(len(suppliers), 1)
         self.assertEqual(suppliers[0].name, "supplier1")
         self.assertEqual(suppliers[0].like_count, 2)
         self.assertEqual(suppliers[0].is_active, True)
-        self.assertEqual(len(suppliers[0].products), 3)
+        self.assertEqual(suppliers[0].products, [1, 2, 3])
         self.assertEqual(suppliers[0].rating, 8.5)
 
 
@@ -292,5 +300,3 @@ class TestModels(TestCase):
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)
-
-

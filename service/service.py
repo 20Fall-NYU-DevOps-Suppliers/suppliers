@@ -30,6 +30,7 @@ def hello():
     """
     return "Hello Supplier!"
 
+
 ######################################################################
 # RETRIEVE A SUPPLIER (READ)
 ######################################################################
@@ -81,6 +82,7 @@ def create_suppliers():
     return make_response(jsonify(message), status.HTTP_201_CREATED, 
                         {'Location': location_url})
 
+
 ######################################################################
 # UPDATE A SUPPLIER
 ######################################################################
@@ -102,6 +104,7 @@ def update_suppliers(supplier_id):
     supplier.save()
     return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
+
 ######################################################################
 # LIST ALL SUPPLIERS
 ######################################################################
@@ -109,23 +112,27 @@ def update_suppliers(supplier_id):
 def list_suppliers():
     """ Returns all of the suppliers """
     app.logger.info("Request for supplier list")
-    suppliers = []
     name = request.args.get('name')
     is_active = request.args.get('is_active')
     rating = request.args.get('rating')
     product_id = request.args.get('product_id')
+    like_count = request.args.get('like_count')
 
     if name:
         app.logger.info('Find suppliers by name: %s', name)
         suppliers = Supplier.find_by_name(name)
+    elif like_count:
+        app.logger.info('Find suppliers with rating greater than: %s', rating)
+        like_count = int(like_count)
+        suppliers = Supplier.find_by_greater("like_count", like_count)
     elif is_active:
         app.logger.info('Find suppliers by is_active: %s', is_active)
-        is_active = request.args.get('is_active') == 'true'
+        is_active = (is_active == 'true')
         suppliers = Supplier.find_by_is_active(is_active)
     elif rating:
-        app.logger.info('Find suppliers by rating: %s', rating)
-        rating = float(request.args.get('rating'))
-        suppliers = Supplier.find_by_rating(rating)
+        app.logger.info('Find suppliers with rating greater than: %s', rating)
+        rating = float(rating)
+        suppliers = Supplier.find_by_greater("rating", rating)
     elif product_id:
         app.logger.info('Find suppliers containing product with id %s in their products', product_id)
         product_id = int(product_id)
@@ -138,6 +145,7 @@ def list_suppliers():
     results = [supplier.serialize() for supplier in suppliers]
     app.logger.info("Returning %d suppliers", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)
+
 
 ######################################################################
 # DELETE A SUPPLIER
@@ -154,7 +162,7 @@ def delete_supplier(supplier_id):
         supplier.delete()
     return make_response('', status.HTTP_204_NO_CONTENT)
   
-  
+
 ######################################################################
 #  ACTION LIKE A SUPPLIER
 ######################################################################

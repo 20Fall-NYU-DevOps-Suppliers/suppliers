@@ -1,4 +1,3 @@
-
 """
 Test Factory to make fake objects for testing
 """
@@ -24,3 +23,4 @@ if __name__ == "__main__":
     for _ in range(10):
         supplier = SupplierFactory()
         print(supplier.serialize())
+

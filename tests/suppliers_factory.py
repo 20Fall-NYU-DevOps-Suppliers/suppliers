@@ -8,7 +8,7 @@ from service.models import Supplier
 
 
 class SupplierFactory(factory.Factory):
-    """ Creates fake pets that you don't have to feed """
+    """ Creates fake suppliers that you don't have to feed """
 
     class Meta:
         model = Supplier

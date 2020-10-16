@@ -106,6 +106,14 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].rating, 9.0)
         self.assertEqual(suppliers[0].name, supplier.name)
 
+    def test_delete_a_supplier(self):
+        """ Delete a Supplier """
+        supplier = SupplierFactory()
+        supplier.save()
+        self.assertEqual(len(Supplier.all()), 1)
+        # delete the supplier and make sure it isn't in the database
+        supplier.delete()
+        self.assertEqual(len(Supplier.all()), 0)      
 
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """
@@ -284,4 +292,5 @@ class TestModels(TestCase):
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)
+
 

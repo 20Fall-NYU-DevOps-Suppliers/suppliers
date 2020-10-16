@@ -8,6 +8,7 @@ nosetests --stop tests/test_service.py:TestSupplierServer
 import unittest
 import logging
 from flask_api import status
+from werkzeug.datastructures import MultiDict, ImmutableMultiDict
 from service import service
 from .suppliers_factory import SupplierFactory
 
@@ -36,7 +37,7 @@ class TestService(unittest.TestCase):
 
 
     def _create_suppliers(self, count):
-        """ Factory method to create pets in bulk """
+        """ Factory method to create suppliers in bulk """
         suppliers = []
         for _ in range(count):
             test_supplier = SupplierFactory()
@@ -46,8 +47,8 @@ class TestService(unittest.TestCase):
             self.assertEqual(
                 resp.status_code, status.HTTP_201_CREATED, "Could not create test suppliers"
             )
-            new_pet = resp.get_json()
-            test_supplier.id = new_pet["_id"]
+            new_supplier = resp.get_json()
+            test_supplier.id = new_supplier["_id"]
             suppliers.append(test_supplier)
         return suppliers
 
@@ -136,24 +137,42 @@ class TestService(unittest.TestCase):
 
     def test_create_supplier(self):
         """ Create a new Supplier """
+        supplier_count = self.get_supplier_count()
         new_supplier = SupplierFactory()
         resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        location = resp.headers.get('Location')
+        self.assertNotEqual(location, None)
         new_json = resp.get_json()
         self.assertEqual(new_json['name'], new_supplier.name)
         self.assertEqual(new_json['like_count'], new_supplier.like_count)
         self.assertEqual(new_json['products'], new_supplier.products)
         self.assertEqual(new_json['rating'], new_supplier.rating)
         self.assertEqual(new_json['is_active'], new_supplier.is_active)
+        # check that count has gone up and includes sammy
+        resp = self.app.get('/suppliers')
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(len(data), supplier_count + 1)
 
-        # check that count has gone up and includes supplier1
-        # resp = self.app.get('/suppliers')
-        # data = resp.get_json()
-        # logging.debug('data = %s', data)
-        # self.assertEqual(resp.status_code, HTTP_200_OK)
-        # TODO after finishing List Service
-        # self.assertEqual(len(data), supplier_count + 1)
-        # self.assertIn(new_json, data)
+    def test_create_supplier_from_formdata(self):
+        supplier_data = MultiDict()
+        supplier_data.add('name', 'supplier1')
+        supplier_data.add('like_count', 2)
+        supplier_data.add('products', [1, 2, 3])
+        supplier_data.add('rating', 8.5)
+        supplier_data.add('is_active', True)
+        data = ImmutableMultiDict(supplier_data)
+        resp = self.app.post('/suppliers', data=data, content_type='application/x-www-form-urlencoded')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        # Make sure location header is set
+        location = resp.headers.get('Location', None)
+        self.assertNotEqual(location, None)
+        # Check the data is correct
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertEqual(data['name'], 'supplier1')
 
 
     def test_create_supplier_with_no_name(self):
@@ -196,6 +215,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
 
     def test_update_supplier(self):
+        """ Update a Supplier """
         test_supplier = SupplierFactory()
 
         post_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
@@ -216,6 +236,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['name'], 'supplier2')
       
     def test_update_supplier_with_no_name(self): 
+        """ Update a Supplier without assigning a name """
         new_supplier = SupplierFactory()
         post_resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         posted_data = post_resp.get_json()
@@ -236,13 +257,33 @@ class TestService(unittest.TestCase):
         resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
-      
+    def test_delete_supplier(self):
+        """ Delete a Supplier """
+        supplier = SupplierFactory()
+        posted_resp = self.app.post('/suppliers', json=supplier.serialize(), content_type='application/json')
+        
+        # save the current number of suppliers for later comparrison
+        supplier_count = self.get_supplier_count()
+       
+       # delete a supplier
+        posted_data = posted_resp.get_json()
+        resp = self.app.delete('/suppliers/{}'.format(posted_data['_id']), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_supplier_count()
+        self.assertEqual(new_count, supplier_count - 1)  
 
 ######################################################################
 # Utility functions
 ######################################################################
-
-
+    def get_supplier_count(self):
+        """ save the current number of suppliers """
+        resp = self.app.get('/suppliers')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        return len(data)
+      
 ######################################################################
 #   M A I N
 ######################################################################
@@ -250,5 +291,3 @@ if __name__ == '__main__':
     unittest.main()
     suite = unittest.TestLoader().loadTestsFromTestCase(TestService)
     unittest.TextTestRunner(verbosity=2).run(suite)
-
-

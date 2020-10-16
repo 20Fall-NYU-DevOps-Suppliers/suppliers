@@ -13,7 +13,7 @@ ACTION /suppliers/{id}/like - increments the like count of the Supplier
 
 import sys
 import logging
-from flask import jsonify, request, make_response, abort
+from flask import jsonify, request, make_response, abort, url_for
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Supplier
@@ -77,16 +77,13 @@ def create_suppliers():
     supplier.save()
     app.logger.info('Supplier with new id [%s] saved!', supplier.id)
     message = supplier.serialize()
-    # TODO after finishing Query and add utility functions
-    # location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
-    # return make_response(jsonify(message), status.HTTP_201_CREATED,
-    #                       {'Location': location_url})
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED, 
+                        {'Location': location_url})
 
 ######################################################################
 # UPDATE A SUPPLIER
 ######################################################################
-
 @app.route('/suppliers/<supplier_id>', methods=['PUT'])
 def update_suppliers(supplier_id):
     """
@@ -137,7 +134,22 @@ def list_suppliers():
     app.logger.info("Returning %d suppliers", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-
+######################################################################
+# DELETE A SUPPLIER
+######################################################################
+@app.route('/suppliers/<supplier_id>', methods=['DELETE'])
+def delete_supplier(supplier_id):
+    """
+    Delete a Supplier
+    This endpoint will delete a Supplier based the id specified in the path
+    """
+    app.logger.info('Request to Delete a Supplier with id [%s]', supplier_id)
+    supplier = Supplier.find(supplier_id)
+    if supplier:
+        supplier.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+  
+  
 ######################################################################
 #  ACTION LIKE A SUPPLIER
 ######################################################################

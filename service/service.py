@@ -83,6 +83,27 @@ def create_suppliers():
     #                       {'Location': location_url})
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
+######################################################################
+# UPDATE A SUPPLIER
+######################################################################
+
+@app.route('/suppliers/<supplier_id>', methods=['PUT'])
+def update_suppliers(supplier_id):
+    """
+    Update a supplier
+    This endpoint will update a Supplier based the body that is posted
+    """
+    app.logger.info('Request to Update a supplier with id [%s]', supplier_id)
+    check_content_type('application/json')
+    supplier = Supplier.find(supplier_id)
+    if not supplier:
+        raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+    data = request.get_json()
+    app.logger.info(data)
+    supplier.deserialize(data)
+    supplier.id = supplier_id
+    supplier.save()
+    return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 # LIST ALL SUPPLIERS

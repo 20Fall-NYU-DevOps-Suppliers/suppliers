@@ -83,7 +83,7 @@ def create_suppliers():
 
 
 ######################################################################
-#UPDATE A SUPPLIER
+# UPDATE A SUPPLIER
 ######################################################################
 @app.route('/suppliers/<supplier_id>', methods=['PUT'])
 def update_suppliers(supplier_id):

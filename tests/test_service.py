@@ -157,16 +157,7 @@ class TestSupplierServer(TestCase):
 ####################################################:##################
 # Utility functions
 ######################################################################
-    def get_supplier(self, name):
-        """
-        Gets a supplier for use in other actions
-        """
-        resp = self.app.get('/suppliers', query_string='name={}'.format(name))
-        self.assertEqual(resp.status_code, HTTP_200_OK)
-        self.assertGreater(len(resp.data), 0)
-        data = resp.get_json()
-        logging.debug('data=%s', data)
-        return data
+    
 
 ######################################################################
 #   M A I N

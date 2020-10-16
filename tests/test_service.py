@@ -158,10 +158,10 @@ class TestService(unittest.TestCase):
         supplier = SupplierFactory()
         posted_resp = self.app.post('/suppliers', json=supplier.serialize(), content_type='application/json')
         
-        # save the current number of pets for later comparrison
+        # save the current number of suppliers for later comparrison
         supplier_count = self.get_supplier_count()
        
-       # delete a pet 
+       # delete a supplier 
         posted_data = posted_resp.get_json()
         resp = self.app.delete('/suppliers/{}'.format(posted_data['_id']), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)

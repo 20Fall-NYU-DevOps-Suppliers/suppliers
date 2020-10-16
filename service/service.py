@@ -109,8 +109,32 @@ def update_suppliers(supplier_id):
 def list_suppliers():
     """ Returns all of the suppliers """
     app.logger.info("Request for supplier list")
-    suppliers = Supplier.all()
+    suppliers = []
+    name = request.args.get('name')
+    is_active = request.args.get('is_active')
+    rating = request.args.get('rating')
+    product_id = request.args.get('product_id')
 
+    if name:
+        app.logger.info('Find suppliers by name: %s', name)
+        suppliers = Supplier.find_by_name(name)
+    elif is_active:
+        app.logger.info('Find suppliers by is_active: %s', is_active)
+        is_active = request.args.get('is_active') == 'true'
+        suppliers = Supplier.find_by_is_active(is_active)
+    elif rating:
+        app.logger.info('Find suppliers by rating: %s', rating)
+        rating = float(request.args.get('rating'))
+        suppliers = Supplier.find_by_rating(rating)
+    elif product_id:
+        app.logger.info('Find suppliers containing product with id %s in their products', product_id)
+        product_id = int(product_id)
+        suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
+    else:
+        app.logger.info('Find all suppliers')
+        suppliers = Supplier.all()
+
+    app.logger.info('[%s] Suppliers returned', len(suppliers))
     results = [supplier.serialize() for supplier in suppliers]
     app.logger.info("Returning %d suppliers", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)

@@ -68,6 +68,63 @@ class TestService(unittest.TestCase):
         self.assertEqual(len(data), 10)
 
 
+    def test_query_by_name(self):
+        """ Query Suppliers by name """
+        suppliers = self._create_suppliers(5)
+        test_name = suppliers[0].name
+        name_suppliers = [supplier for supplier in suppliers if supplier.name == test_name]
+        resp = self.app.get("/suppliers", query_string="name={}".format(test_name))
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(name_suppliers))
+        # check the data just to be sure
+        for supplier in data:
+            self.assertEqual(supplier['name'], test_name)
+    
+
+    def test_query_by_is_active(self):
+        """ Query Suppliers by is_active """
+        suppliers = self._create_suppliers(5)
+        test_is_active = suppliers[0].is_active
+        test_is_active_str = 'true' if test_is_active else 'false'
+        is_active_suppliers = [supplier for supplier in suppliers if supplier.is_active == test_is_active]
+        resp = self.app.get("/suppliers", query_string="is_active={}".format(test_is_active_str))
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(is_active_suppliers))
+        # check the data just to be sure
+        for supplier in data:
+            self.assertEqual(supplier['is_active'], test_is_active)
+
+
+    def test_query_by_rating(self):
+        """ Query Suppliers by rating """
+        suppliers = self._create_suppliers(5)
+        test_rating = suppliers[0].rating
+        rating_suppliers = [supplier for supplier in suppliers if supplier.rating == test_rating]
+        resp = self.app.get("/suppliers", query_string="rating={}".format(test_rating))
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(rating_suppliers))
+        # check the data just to be sure
+        for supplier in data:
+            self.assertEqual(supplier['rating'], test_rating)
+
+
+    def test_query_by_product_id(self):
+        """ Query Suppliers by product id """
+        suppliers = self._create_suppliers(5)
+        test_product_id = suppliers[0].products[0]
+        all_suppliers = [supplier for supplier in suppliers if test_product_id in supplier.products]
+        resp = self.app.get("/suppliers", query_string="product_id={}".format(test_product_id))
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), len(all_suppliers))
+        # check the data just to be sure
+        for supplier in data:
+            self.assertIn(test_product_id, supplier['products'])
+
+
     def test_get_supplier(self):
         """ get a single Supplier """
         test_supplier = self._create_suppliers(1)[0]

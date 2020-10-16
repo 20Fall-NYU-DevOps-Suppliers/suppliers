@@ -27,6 +27,7 @@ import os
 import json
 import logging
 from cloudant.client import Cloudant
+from cloudant.query import Query
 from cloudant.adapters import Replay429Adapter
 from requests import HTTPError, ConnectionError
 
@@ -190,6 +191,33 @@ class Supplier(object):
             return Supplier().deserialize(document)
         except KeyError:
             return None
+
+    
+    @classmethod
+    def find_by(cls, **kwargs):
+        """ Find records using selector """
+        query = Query(cls.database, selector=kwargs)
+        results = []
+        for doc in query.result:
+            supplier = Supplier()
+            supplier.deserialize(doc)
+            results.append(supplier)
+        return results
+
+    @classmethod
+    def find_by_name(cls, name):
+        """ Query that finds Suppliers by their name """
+        return cls.find_by(name=name)
+
+    @classmethod
+    def find_by_is_active(cls, is_active):
+        """ Query that finds Suppliers by their active status """
+        return cls.find_by(is_active=is_active)
+
+    @classmethod
+    def find_by_rating(cls, rating):
+        """ Query that finds Suppliers by their rating """
+        return cls.find_by(rating=rating)
 
 
 ############################################################

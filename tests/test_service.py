@@ -60,9 +60,11 @@ class TestService(unittest.TestCase):
 
     def test_get_supplier_list(self):
         """ Get a list of Suppliers """
+        self._create_suppliers(10)
         resp = self.app.get('/suppliers')
         self.assertEqual(resp.status_code, HTTP_200_OK)
-        self.assertTrue(len(resp.data) > 0)
+        data = resp.get_json()
+        self.assertEqual(len(data), 10)
 
 
     def test_get_supplier(self):

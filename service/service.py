@@ -95,7 +95,7 @@ def list_suppliers():
 
     results = [supplier.serialize() for supplier in suppliers]
     app.logger.info("Returning %d suppliers", len(results))
-    return make_response(jsonify(results), status.HTTP_200_ok)
+    return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################

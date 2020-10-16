@@ -40,6 +40,13 @@ class TestSupplierServer(TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
     
 
+    def test_get_supplier_list(self):
+        """ Get a list of Suppliers """
+        resp = self.app.get('/suppliers')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertIn(len(resp.data) > 0)
+
+
     def test_get_supplier(self):
         """ get a single Supplier """
         test_supplier = {"id": 1, "name": "supplier1", "like_count": 2, "is_active": True, "products": [1,2,3], "rating": 8.5}
@@ -125,6 +132,7 @@ class TestSupplierServer(TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data['like_count'], 3)
+
 
 ######################################################################
 # Utility functions

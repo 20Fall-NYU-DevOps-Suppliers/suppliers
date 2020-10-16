@@ -13,7 +13,7 @@ ACTION /suppliers/{id}/like - increments the like count of the Supplier
 
 import sys
 import logging
-from flask import jsonify, request, make_response, abort
+from flask import jsonify, request, make_response, abort, url_for
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Supplier
@@ -77,11 +77,9 @@ def create_suppliers():
     supplier.save()
     app.logger.info('Supplier with new id [%s] saved!', supplier.id)
     message = supplier.serialize()
-    # TODO after finishing Query and add utility functions
-    # location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
-    # return make_response(jsonify(message), status.HTTP_201_CREATED,
-    #                       {'Location': location_url})
-    return make_response(jsonify(message), status.HTTP_201_CREATED)
+    location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
+    return make_response(jsonify(message), status.HTTP_201_CREATED, 
+                        {'Location': location_url})
 
 ######################################################################
 # UPDATE A SUPPLIER
@@ -105,7 +103,7 @@ def update_suppliers(supplier_id):
     return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# LIST ALL PETS
+# LIST ALL SUPPLIERS
 ######################################################################
 @app.route('/suppliers', methods=['GET'])
 def list_suppliers():

@@ -58,6 +58,15 @@ class TestService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
 
 
+    def test_list_suppliers(self):
+        """ Get a list of Suppliers """
+        self._create_suppliers(10)
+        resp = self.app.get('/suppliers')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 10)
+
+
     def test_get_supplier(self):
         """ get a single Supplier """
         test_supplier = self._create_suppliers(1)[0]
@@ -144,9 +153,7 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
 
     def test_update_supplier(self):
-        #test_supplier = {"id":1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
         test_supplier = SupplierFactory()
-        #self.assertEqual(test_supplier['name'], 'supplier1')
 
         post_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
         
@@ -167,8 +174,6 @@ class TestService(unittest.TestCase):
         self.assertEqual(data['name'], 'supplier2')
       
     def test_update_supplier_with_no_name(self): 
-        #new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating":8.5}
-        
         new_supplier = SupplierFactory()
         post_resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
         posted_data = post_resp.get_json()
@@ -185,12 +190,12 @@ class TestService(unittest.TestCase):
 
     def test_update_supplier_not_found(self):
         """Update a Supplier that does not exist"""
-        #new_supplier = {"id": 1, "name": "supplier1", "like_count":2, "is_active": True, "products": [1,2,3], "rating": 8.5}
         new_supplier = SupplierFactory()
         resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
       
+
 ######################################################################
 # Utility functions
 ######################################################################

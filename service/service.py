@@ -106,6 +106,20 @@ def update_suppliers(supplier_id):
     return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
 ######################################################################
+# LIST ALL PETS
+######################################################################
+@app.route('/suppliers', methods=['GET'])
+def list_suppliers():
+    """ Returns all of the suppliers """
+    app.logger.info("Request for supplier list")
+    suppliers = Supplier.all()
+
+    results = [supplier.serialize() for supplier in suppliers]
+    app.logger.info("Returning %d suppliers", len(results))
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+
+######################################################################
 #  ACTION LIKE A SUPPLIER
 ######################################################################
 @app.route('/suppliers/<supplier_id>/like', methods=['PUT'])

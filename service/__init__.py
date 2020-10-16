@@ -1,4 +1,3 @@
-
 """
 Package: app
 Package for the application models and services

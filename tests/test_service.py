@@ -132,8 +132,7 @@ class TestService(unittest.TestCase):
         data = "wrong_content_type_test_words"
         resp = self.app.post('/suppliers', data=data, content_type='plain/text')
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-
-    
+        
     def test_like_supplier_non_found(self):
         """ Like a Supplier that doesn't exist """
         resp = self.app.put('/suppliers/0/like')
@@ -153,6 +152,49 @@ class TestService(unittest.TestCase):
         data = resp.get_json()
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
 
+    def test_update_supplier(self):
+        """ Update a Supplier """
+        test_supplier = SupplierFactory()
+
+        post_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
+        
+        posted_data = post_resp.get_json()
+        resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+
+        data['name'] = 'supplier2'
+ 
+        resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        
+        resp = self.app.get('/suppliers/{}'.format(data['_id']), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['name'], 'supplier2')
+      
+    def test_update_supplier_with_no_name(self): 
+        """ Update a Supplier without assigning a name """
+        new_supplier = SupplierFactory()
+        post_resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
+        posted_data = post_resp.get_json()
+        
+        resp = self.app.get("/suppliers/{}".format(posted_data['_id']), content_type="application/json")
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+
+        data = resp.get_json()
+        
+        del data['name']
+        resp = self.app.put('/suppliers/{}'.format(data['_id']), json=data, content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
+      
+
+    def test_update_supplier_not_found(self):
+        """Update a Supplier that does not exist"""
+        new_supplier = SupplierFactory()
+        resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
     def test_delete_supplier(self):
         """ Delete a Supplier """
         supplier = SupplierFactory()
@@ -161,19 +203,17 @@ class TestService(unittest.TestCase):
         # save the current number of suppliers for later comparrison
         supplier_count = self.get_supplier_count()
        
-       # delete a supplier 
+       # delete a supplier
         posted_data = posted_resp.get_json()
         resp = self.app.delete('/suppliers/{}'.format(posted_data['_id']), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_supplier_count()
-        self.assertEqual(new_count, supplier_count - 1) 
-
+        self.assertEqual(new_count, supplier_count - 1)  
 
 ######################################################################
 # Utility functions
 ######################################################################
-
     def get_supplier_count(self):
         """ save the current number of suppliers """
         resp = self.app.get('/suppliers')
@@ -181,8 +221,7 @@ class TestService(unittest.TestCase):
         data = resp.get_json()
         logging.debug('data = %s', data)
         return len(data)
-
-
+   
 ######################################################################
 #   M A I N
 ######################################################################

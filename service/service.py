@@ -83,6 +83,26 @@ def create_suppliers():
     #                       {'Location': location_url})
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
+######################################################################
+# UPDATE A SUPPLIER
+######################################################################
+@app.route('/suppliers/<supplier_id>', methods=['PUT'])
+def update_suppliers(supplier_id):
+    """
+    Update a supplier
+    This endpoint will update a Supplier based the body that is posted
+    """
+    app.logger.info('Request to Update a supplier with id [%s]', supplier_id)
+    check_content_type('application/json')
+    supplier = Supplier.find(supplier_id)
+    if not supplier:
+        raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+    data = request.get_json()
+    app.logger.info(data)
+    supplier.deserialize(data)
+    supplier.id = supplier_id
+    supplier.save()
+    return make_response(jsonify(supplier.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 # LIST ALL PETS
@@ -97,7 +117,22 @@ def list_suppliers():
     app.logger.info("Returning %d suppliers", len(results))
     return make_response(jsonify(results), status.HTTP_200_OK)
 
-
+######################################################################
+# DELETE A SUPPLIER
+######################################################################
+@app.route('/suppliers/<supplier_id>', methods=['DELETE'])
+def delete_supplier(supplier_id):
+    """
+    Delete a Supplier
+    This endpoint will delete a Supplier based the id specified in the path
+    """
+    app.logger.info('Request to Delete a Supplier with id [%s]', supplier_id)
+    supplier = Supplier.find(supplier_id)
+    if supplier:
+        supplier.delete()
+    return make_response('', status.HTTP_204_NO_CONTENT)
+  
+  
 ######################################################################
 #  ACTION LIKE A SUPPLIER
 ######################################################################
@@ -117,20 +152,6 @@ def like_supplier(supplier_id):
     return make_response(jsonify(message), status.HTTP_200_OK)
 
 
-######################################################################
-# DELETE A SUPPLIER
-######################################################################
-@app.route('/suppliers/<supplier_id>', methods=['DELETE'])
-def delete_supplier(supplier_id):
-    """
-    Delete a Supplier
-    This endpoint will delete a Supplier based the id specified in the path
-    """
-    app.logger.info('Request to Delete a Supplier with id [%s]', supplier_id)
-    supplier = Supplier.find(supplier_id)
-    if supplier:
-        supplier.delete()
-    return make_response('', status.HTTP_204_NO_CONTENT)
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S

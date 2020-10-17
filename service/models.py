@@ -45,11 +45,11 @@ RETRY_BACKOFF = int(os.environ.get('RETRY_BACKOFF', 2))
 
 class DatabaseConnectionError(Exception):
     """ Custom Exception when database connection fails """
-    pass
+    #pass
 
 class DataValidationError(Exception):
     """ Custom Exception with data validation fails """
-    pass
+    #pass
 
 
 class Supplier(object):
@@ -62,7 +62,7 @@ class Supplier(object):
 
     logger = logging.getLogger(__name__)
     client = None   # cloudant.client.Cloudant
-    database = None # cloudant.database.CloudantDatabase
+    database = [] # cloudant.database.CloudantDatabase
 
 
     def __init__(self, name=None, like_count=None, is_active=True, products=None, rating=None):

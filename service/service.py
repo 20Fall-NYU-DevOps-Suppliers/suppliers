@@ -17,11 +17,11 @@ from flask import jsonify, request, make_response, abort, url_for
 from flask_api import status    # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 from service.models import Supplier
+import service.error_handlers
 from . import app
 
 # Error handlers require app to be initialized so we must import
 # them only after we have initialized the Flask app instance
-import service.error_handlers
 
 @app.route('/')
 def hello():
@@ -79,8 +79,8 @@ def create_suppliers():
     app.logger.info('Supplier with new id [%s] saved!', supplier.id)
     message = supplier.serialize()
     location_url = url_for('get_suppliers', supplier_id=supplier.id, _external=True)
-    return make_response(jsonify(message), status.HTTP_201_CREATED, 
-                        {'Location': location_url})
+    return make_response(jsonify(message), status.HTTP_201_CREATED,
+                         {'Location': location_url})
 
 
 ######################################################################
@@ -134,7 +134,8 @@ def list_suppliers():
         rating = float(rating)
         suppliers = Supplier.find_by_greater("rating", rating)
     elif product_id:
-        app.logger.info('Find suppliers containing product with id %s in their products', product_id)
+        app.logger.info('Find suppliers containing product with id %s in their products',
+                        product_id)
         product_id = int(product_id)
         suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
     else:
@@ -161,7 +162,7 @@ def delete_supplier(supplier_id):
     if supplier:
         supplier.delete()
     return make_response('', status.HTTP_204_NO_CONTENT)
-  
+
 
 ######################################################################
 #  ACTION LIKE A SUPPLIER

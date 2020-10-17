@@ -9,7 +9,7 @@ import os
 import json
 from unittest import TestCase
 from unittest.mock import patch
-from requests import HTTPError, ConnectionError
+from requests import HTTPError
 from service.models import Supplier, DataValidationError, DatabaseConnectionError
 from .suppliers_factory import SupplierFactory
 

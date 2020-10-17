@@ -86,7 +86,8 @@ class TestService(unittest.TestCase):
         """ Query Suppliers with like count limit"""
         suppliers = self._create_suppliers(5)
         like_limit = suppliers[0].like_count
-        like_count_suppliers = [supplier for supplier in suppliers if supplier.like_count > like_limit]
+        like_count_suppliers = [supplier for supplier in suppliers
+                                if supplier.like_count > like_limit]
         resp = self.app.get("/suppliers", query_string="like_count={}".format(like_limit))
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
@@ -101,7 +102,8 @@ class TestService(unittest.TestCase):
         suppliers = self._create_suppliers(5)
         test_is_active = suppliers[0].is_active
         test_is_active_str = 'true' if test_is_active else 'false'
-        is_active_suppliers = [supplier for supplier in suppliers if supplier.is_active == test_is_active]
+        is_active_suppliers = [supplier for supplier in suppliers
+                               if supplier.is_active == test_is_active]
         resp = self.app.get("/suppliers", query_string="is_active={}".format(test_is_active_str))
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
@@ -167,7 +169,8 @@ class TestService(unittest.TestCase):
         """ Create a new Supplier """
         supplier_count = self.get_supplier_count()
         new_supplier = SupplierFactory()
-        resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         location = resp.headers.get('Location')
         self.assertNotEqual(location, None)
@@ -193,7 +196,8 @@ class TestService(unittest.TestCase):
         supplier_data.add('rating', 8.5)
         supplier_data.add('is_active', True)
         data = ImmutableMultiDict(supplier_data)
-        resp = self.app.post('/suppliers', data=data, content_type='application/x-www-form-urlencoded')
+        resp = self.app.post('/suppliers', data=data,
+                             content_type='application/x-www-form-urlencoded')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         # Make sure location header is set
         location = resp.headers.get('Location', None)
@@ -208,7 +212,8 @@ class TestService(unittest.TestCase):
         """ Create a Supplier without a name """
         new_supplier = SupplierFactory()
         new_supplier.name = None
-        resp = self.app.post('/suppliers', json=new_supplier.serialize(), content_type='application/json')
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
 
@@ -237,9 +242,11 @@ class TestService(unittest.TestCase):
     def test_like_supplier(self):
         """ Like a Supplier """
         test_supplier = SupplierFactory()
-        posted_resp = self.app.post('/suppliers', json=test_supplier.serialize(), content_type='application/json')
+        posted_resp = self.app.post('/suppliers', json=test_supplier.serialize(),
+                                    content_type='application/json')
         posted_data = posted_resp.get_json()
-        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'], content_type="application/json"))
+        resp = self.app.put("/suppliers/{}/like".format(posted_data['_id'],
+                                                        content_type="application/json"))
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
@@ -249,26 +256,30 @@ class TestService(unittest.TestCase):
         """ Update a Supplier """
         test_supplier = self._create_suppliers(1)[0]
         test_supplier.name = "test_update"
-        resp = self.app.put('/suppliers/{}'.format(test_supplier.id), json=test_supplier.serialize(), content_type='application/json')
+        resp = self.app.put('/suppliers/{}'.format(test_supplier.id),
+                            json=test_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_200_OK)
-        resp = self.app.get('/suppliers/{}'.format(test_supplier.id), content_type='application/json')
+        resp = self.app.get('/suppliers/{}'.format(test_supplier.id),
+                            content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data['name'], 'test_update')
 
-      
-    def test_update_supplier_with_no_name(self): 
+
+    def test_update_supplier_with_no_name(self):
         """ Update a Supplier without assigning a name """
         test_supplier = self._create_suppliers(1)[0]
         test_supplier.name = None
-        resp = self.app.put('/suppliers/{}'.format(test_supplier.id), json=test_supplier.serialize(), content_type='application/json')
+        resp = self.app.put('/suppliers/{}'.format(test_supplier.id),
+                            json=test_supplier.serialize(), content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_400_BAD_REQUEST)
 
 
     def test_update_supplier_not_found(self):
         """Update a Supplier that does not exist"""
         new_supplier = SupplierFactory()
-        resp = self.app.put('/suppliers/0', json=new_supplier.serialize(), content_type='application/json')
+        resp = self.app.put('/suppliers/0', json=new_supplier.serialize(),
+                            content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
 
 
@@ -278,7 +289,8 @@ class TestService(unittest.TestCase):
         self.assertEqual(len(test_suppliers), 5)
 
        # delete a supplier
-        resp = self.app.delete('/suppliers/{}'.format(test_suppliers[0].id), content_type='application/json')
+        resp = self.app.delete('/suppliers/{}'.format(test_suppliers[0].id),
+                               content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_supplier_count()

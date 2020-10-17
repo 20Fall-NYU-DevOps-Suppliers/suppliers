@@ -230,15 +230,6 @@ class TestService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
 
-    def test_like_supplier_non_found(self):
-        """ Like a Supplier that doesn't exist """
-        resp = self.app.put('/suppliers/0/like')
-        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
-        data = resp.get_json()
-        logging.debug('data = %s', data)
-        self.assertIn('was not found', data['message'])
-
-
     def test_like_supplier(self):
         """ Like a Supplier """
         test_supplier = SupplierFactory()
@@ -250,6 +241,26 @@ class TestService(unittest.TestCase):
         self.assertEqual(resp.status_code, HTTP_200_OK)
         data = resp.get_json()
         self.assertEqual(data['like_count'], test_supplier.like_count+1)
+
+
+    def test_like_supplier_non_found(self):
+        """ Like a Supplier that doesn't exist """
+        resp = self.app.put('/suppliers/0/like')
+        self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+        data = resp.get_json()
+        logging.debug('data = %s', data)
+        self.assertIn('was not found', data['message'])
+
+
+    def test_like_supplier_wrong_method(self):
+        """ Like a Supplier using wrong HTTP method """
+        test_supplier = SupplierFactory()
+        posted_resp = self.app.post('/suppliers', json=test_supplier.serialize(),
+                                    content_type='application/json')
+        posted_data = posted_resp.get_json()
+        resp = self.app.post("/suppliers/{}/like".format(posted_data['_id'],
+                                                        content_type="application/json"))
+        self.assertEqual(resp.status_code, HTTP_405_METHOD_NOT_ALLOWED)
 
 
     def test_update_supplier(self):

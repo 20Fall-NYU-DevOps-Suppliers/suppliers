@@ -55,7 +55,7 @@ class TestModels(TestCase):
     @patch('cloudant.client.Cloudant.__init__')
     def test_connection_error(self, bad_mock):
         """ Test Connection error handler """
-        bad_mock.side_effect = ConnectionError()
+        bad_mock.side_effect = DatabaseConnectionError()
         self.assertRaises(DatabaseConnectionError, Supplier.init_db, "test")
 
 
@@ -106,6 +106,7 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].rating, 9.0)
         self.assertEqual(suppliers[0].name, supplier.name)
 
+
     def test_delete_a_supplier(self):
         """ Delete a Supplier """
         supplier = SupplierFactory()
@@ -114,6 +115,7 @@ class TestModels(TestCase):
         # delete the supplier and make sure it isn't in the database
         supplier.delete()
         self.assertEqual(len(Supplier.all()), 0)
+
 
     def test_serialize_a_supplier(self):
         """ Serialize a Supplier """

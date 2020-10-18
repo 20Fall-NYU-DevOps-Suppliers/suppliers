@@ -259,7 +259,7 @@ class TestService(unittest.TestCase):
                                     content_type='application/json')
         posted_data = posted_resp.get_json()
         resp = self.app.post("/suppliers/{}/like".format(posted_data['_id'],
-                                                        content_type="application/json"))
+                                                         content_type="application/json"))
         self.assertEqual(resp.status_code, HTTP_405_METHOD_NOT_ALLOWED)
 
 
@@ -306,6 +306,20 @@ class TestService(unittest.TestCase):
         self.assertEqual(len(resp.data), 0)
         new_count = self.get_supplier_count()
         self.assertEqual(new_count, len(test_suppliers)-1)
+
+
+    def test_delete_supplier_not_exist(self):
+        """ Delete a Supplier not exist"""
+        test_suppliers = self._create_suppliers(5)
+        self.assertEqual(len(test_suppliers), 5)
+
+       # delete a supplier which doesn't exist, nothing happens in DB
+        resp = self.app.delete('/suppliers/{}'.format(0),
+                               content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)
+        new_count = self.get_supplier_count()
+        self.assertEqual(new_count, len(test_suppliers))
 
 
 ######################################################################

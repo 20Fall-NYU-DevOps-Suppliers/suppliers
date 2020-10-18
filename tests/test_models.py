@@ -61,15 +61,17 @@ class TestModels(TestCase):
 
     def test_create_a_supplier(self):
         """ Create a supplier and assert that it exists """
-        supplier = Supplier("supplier1", 2, True, [1, 2, 3], 8.5)
-        supplier.id = 1
-        self.assertNotEqual(supplier, None)
-        self.assertEqual(supplier.id, 1)
-        self.assertEqual(supplier.name, "supplier1")
-        self.assertEqual(supplier.like_count, 2)
-        self.assertEqual(supplier.is_active, True)
-        self.assertEqual(supplier.products, [1, 2, 3])
-        self.assertEqual(supplier.rating, 8.5)
+        supplier = SupplierFactory()
+        supplier.create()
+        self.assertIsNotNone(supplier.id)
+        suppliers_db = Supplier.all()
+        self.assertEqual(len(suppliers_db), 1)
+        self.assertEqual(supplier.id, suppliers_db[0].id)
+        self.assertEqual(supplier.name, suppliers_db[0].name)
+        self.assertEqual(supplier.like_count, suppliers_db[0].like_count)
+        self.assertEqual(supplier.is_active, suppliers_db[0].is_active)
+        self.assertEqual(supplier.products, suppliers_db[0].products)
+        self.assertEqual(supplier.rating, suppliers_db[0].rating)
 
 
     def test_add_a_supplier(self):
@@ -107,6 +109,18 @@ class TestModels(TestCase):
         self.assertEqual(suppliers[0].name, supplier.name)
 
 
+    def test_update_a_supplier_with_wrong_id(self):
+        """ Update a Supplier with wrong Id"""
+        supplier = SupplierFactory()
+        supplier.id = "0"
+        self.assertEqual(supplier.id, "0")
+        # Call save() with wrong Id, will call update(), nothing will happen
+        supplier.save()
+        # Fetch suppliers and make sure nothing exists in DB
+        suppliers = Supplier.all()
+        self.assertEqual(len(suppliers), 0)
+
+
     def test_delete_a_supplier(self):
         """ Delete a Supplier """
         supplier = SupplierFactory()
@@ -115,6 +129,17 @@ class TestModels(TestCase):
         # delete the supplier and make sure it isn't in the database
         supplier.delete()
         self.assertEqual(len(Supplier.all()), 0)
+
+
+    def test_delete_a_supplier_with_wrong_id(self):
+        """ Delete a Supplier with wrong Id"""
+        supplier = SupplierFactory()
+        supplier.save()
+        self.assertEqual(len(Supplier.all()), 1)
+        # delete the supplier with wrong Id and make sure nothing happens
+        supplier.id = "0"
+        supplier.delete()
+        self.assertEqual(len(Supplier.all()), 1)
 
 
     def test_serialize_a_supplier(self):

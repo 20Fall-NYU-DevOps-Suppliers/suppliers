@@ -26,7 +26,7 @@ HTTP_415_UNSUPPORTED_MEDIA_TYPE = 415
 #  T E S T   C A S E S
 ######################################################################
 class TestService(unittest.TestCase):
-    """ Supplier Service tests """
+    """ Test Cases for Supplier Service """
 
 
     def setUp(self):

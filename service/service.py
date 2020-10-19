@@ -161,7 +161,10 @@ def delete_supplier(supplier_id):
     supplier = Supplier.find(supplier_id)
     if supplier:
         supplier.delete()
-    return make_response('', status.HTTP_204_NO_CONTENT)
+        app.logger.info("Supplier with ID [%s] delete complete.", supplier_id)
+    else:
+        app.logger.info("Supplier with ID [%s] does not exist.", supplier_id)
+    return make_response("", status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################

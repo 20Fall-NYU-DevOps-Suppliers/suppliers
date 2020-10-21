@@ -3,6 +3,17 @@
 ###  Project description
 The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology.
 
+### Model description
+
+|  Column  |  Type  |
+| :----------: | :---------: |
+| supplier_id | String |
+| name | String |
+| like_count | Integer |
+| is_active | Boolean |
+| products | List of Integers |
+| rating | Float | 
+
 ### Features supported
 
  **Seven paths：**  

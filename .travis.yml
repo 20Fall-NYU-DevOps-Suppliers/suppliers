@@ -12,8 +12,8 @@ before_install:
     couchdb:latest
   - docker ps -a
 
-env:
-  - BINDING_CLOUDANT='{"username": "admin","password": "pass","host": "localhost","port": 5984,"url": "http://admin:pass@localhost:5984"}'
+# env:
+#   - BINDING_CLOUDANT='{"username": "admin","password": "pass","host": "localhost","port": 5984,"url": "http://admin:pass@localhost:5984"}'
 
 # command to install dependencies
 install: "pip install -r requirements.txt"

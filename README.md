@@ -1,5 +1,7 @@
 # NYU DevOps Project - Suppliers
 [![Build Status](https://travis-ci.org/20Fall-NYU-DevOps-Suppliers/suppliers.svg?branch=master)](https://travis-ci.org/20Fall-NYU-DevOps-Suppliers/suppliers)
+[![codecov](https://codecov.io/gh/20Fall-NYU-DevOps-Suppliers/suppliers/branch/master/graph/badge.svg)](https://codecov.io/gh/20Fall-NYU-DevOps-Suppliers/suppliers)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###  Project description
 The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology.

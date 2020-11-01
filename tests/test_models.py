@@ -15,28 +15,20 @@ from .suppliers_factory import SupplierFactory
 
 
 VCAP_SERVICES = {
-    'cloudantNoSQLDB': [
-        {'credentials': {
-            'username': 'admin',
-            'password': 'pass',
-            'host': 'localhost',
-            'port': 5984,
-            'url': 'http://admin:pass@localhost:5984'
+    "cloudantNoSQLDB": [
+        {"credentials": {
+            "username": "admin",
+            "password": "pass",
+            "host": "localhost",
+            "port": 5984,
+            "url": "http://admin:pass@localhost:5984"
             }
         }
     ]
 }
 
 VCAP_NO_SERVICES = {
-    'noCloudant': []
-}
-
-BINDING_CLOUDANT = {
-    'username': 'admin',
-    'password': 'pass',
-    'host': 'localhost',
-    'port': 5984,
-    'url': 'http://admin:pass@localhost:5984',
+    "noCloudant": []
 }
 
 
@@ -297,33 +289,18 @@ class TestModels(TestCase):
         self.assertIsNone(supplier.id)
 
 
-    @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
-    def test_vcap_services(self):
-        """ Test if VCAP_SERVICES works """
-        Supplier.init_db("test")
-        self.assertIsNotNone(Supplier.client)
-
-
     @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES)})
     def test_vcap_no_services(self):
-        """ Test VCAP_SERVICES without Cloudant """
+        """ Test VCAP_NO_SERVICES """
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)
 
 
-    @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES),
-                             'BINDING_CLOUDANT': json.dumps(BINDING_CLOUDANT)})
-    def test_vcap_with_binding(self):
-        """ Test no VCAP_SERVICES with BINDING_CLOUDANT """
-        Supplier.init_db("test")
-        self.assertIsNotNone(Supplier.client)
-        self.assertIsNotNone(Supplier.database)
-
-
-    @patch.dict(os.environ, {'BINDING_CLOUDANT': json.dumps(BINDING_CLOUDANT)})
-    def test_vcap_no_services2(self):
-        """ Test BINDING_CLOUDANT """
+    def test_vcap_services(self):
+        """ Test VCAP_SERVICES """
+        if 'VCAP_SERVICES' not in os.environ:
+            os.environ.update({'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)

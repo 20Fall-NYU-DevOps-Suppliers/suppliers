@@ -257,12 +257,7 @@ class Supplier(object):
                 if service.startswith('cloudantNoSQLDB'):
                     opts = vcap_services[service][0]['credentials']
 
-        # if VCAP_SERVICES isn't found, maybe we are running on Kubernetes?
-        if not opts and 'BINDING_CLOUDANT' in os.environ:
-            Supplier.logger.info('Found Kubernetes BINDING_CLOUDANT bindings')
-            opts = json.loads(os.environ['BINDING_CLOUDANT'])
-
-        # If Cloudant not found in VCAP_SERVICES or BINDING_CLOUDANT
+        # If Cloudant not found in VCAP_SERVICES
         # get it from the CLOUDANT_xxx environment variables
         if not opts:
             Supplier.logger.info('VCAP_SERVICES and BINDING_CLOUDANT undefined.')

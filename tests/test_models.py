@@ -292,7 +292,7 @@ class TestModels(TestCase):
     def test_vcap_no_services(self):
         """ Test VCAP_NO_SERVICES """
         if 'VCAP_SERVICES' not in os.environ:
-            os.environ.update({'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
+            os.environ.update({'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES)})
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)

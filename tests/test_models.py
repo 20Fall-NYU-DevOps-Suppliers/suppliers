@@ -289,9 +289,10 @@ class TestModels(TestCase):
         self.assertIsNone(supplier.id)
 
 
-    @patch.dict(os.environ, {'VCAP_SERVICES': json.dumps(VCAP_NO_SERVICES)})
     def test_vcap_no_services(self):
         """ Test VCAP_NO_SERVICES """
+        if 'VCAP_SERVICES' not in os.environ:
+            os.environ.update({'VCAP_SERVICES': json.dumps(VCAP_SERVICES)})
         Supplier.init_db("test")
         self.assertIsNotNone(Supplier.client)
         self.assertIsNotNone(Supplier.database)

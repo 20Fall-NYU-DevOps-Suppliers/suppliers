@@ -6,6 +6,9 @@
 ###  Project description
 The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology.
 
+
+## API Documentation
+
 ### Model description
 
 |  Column  |  Type  |
@@ -17,20 +20,20 @@ The purpose of this project is to develop a suppliers system for an eCommerce we
 | products | List of Integers |
 | rating | Float | 
 
-### Features supported
-
- **Seven paths：**  
- GET /suppliers - Returns a list all of the suppliers  
- GET /suppliers/\<supplierID\> - Returns the supplier with the given id  
- POST /suppliers - creates a new supplier record in the database  
- PUT /suppliers/\<supplierID\> - updates a supplier record in the database  
- DELETE /suppliers/\<supplierID\> - deletes a supplier record in the database  
- QUERY /suppliers/ - query the database by the name of the supplier   
- ACTION /suppliers/\<supplierId\>/like - increments the like_counter of a supplier 
+### URLs
+| HTTP Method | URL | Description | Return
+| :--- | :--- | :--- | :--- |
+| `GET` | `/suppliers/{id}` | Get Supplier by ID | Supplier Object
+| `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
+| `POST` | `/suppliers` | Creates a new Supplier record in the database | Supplier Object
+| `PUT` | `/suppliers/{id}` | Updates a Supplier record in the database | Supplier Object
+| `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
+| `PUT` | `/suppliers/{id}/like` | Increment the like count of the Supplier with the given id number | Supplier Object
+| `DELETE` | `/suppliers/{id}` | Delete the Supplier with the given id number | 204 Status Code 
 
 \<supplierID\> is a string of 24 hexadecimal characters eg: 1e8392f4e6752990a2c23789
 
-### Running Tests
+### Manually Running The Tests
 To run the TDD tests please run the following commands:
 ```
  git clone https://github.com/20Fall-NYU-DevOps-Suppliers/suppliers.git
@@ -51,7 +54,7 @@ To run the TDD tests please run the following commands:
 
 Then the service will available at: http://0.0.0.0:5000/suppliers
 
-### Running Pylint:
+### Checking The Pylint Score:
 ```
 vagrant up
 vagrant ssh

@@ -205,10 +205,20 @@ $(function() {
 
         var name = $("#supplier_name").val();
         var like_count = $("#supplier_like_count").val();
-        var is_active = $("#supplier_is_active").val() == "true";
+        var is_active_str = $("#supplier_is_active").val();
         var products = $("#supplier_products").val();
         var rating = $("#supplier_rating").val();
         var queryString = ""
+
+        var is_active;
+        if (is_active_str == "true"){
+            is_active = true;
+        } else if (is_active_str == "false"){
+            is_active = false;
+        } else {
+            is_active = null;
+        }
+
 
         if (name) {
             queryString += 'name=' + name
@@ -220,7 +230,7 @@ $(function() {
                 queryString += 'like_count=' + like_count
             }
         }
-        if (is_active) {
+        if (is_active!=null) {
             if (queryString.length > 0) {
                 queryString += '&is_active=' + is_active
             } else {
@@ -255,10 +265,10 @@ $(function() {
             $("#search_results").append('<table class="table-striped" cellpadding="10">');
             var header = '<tr>'
             header += '<th style="width:10%">ID</th>'
-            header += '<th style="width:40%">Name</th>'
-            header += '<th style="width:40%">Like_count</th>'
-            header += '<th style="width:10%">Is_active</th></tr>'
-            header += '<th style="width:10%">Products</th></tr>'
+            header += '<th style="width:10%">Name</th>'
+            header += '<th style="width:10%">Like_count</th>'
+            header += '<th style="width:10%">Is_active</th>'
+            header += '<th style="width:10%">Products</th>'
             header += '<th style="width:10%">Rating</th></tr>'
             $("#search_results").append(header);
             var firstSupplier = "";

@@ -183,7 +183,58 @@ class TestService(unittest.TestCase):
         # check that count has gone up and includes sammy
         resp = self.app.get('/suppliers')
         data = resp.get_json()
-        logging.debug('data = %s', data)
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(len(data), supplier_count + 1)
+
+
+    def test_create_supplier_with_string_fields(self):
+        """ Create a new Supplier with string fields """
+        supplier_count = self.get_supplier_count()
+        new_supplier = SupplierFactory()
+        new_supplier.like_count = "15"
+        new_supplier.is_active = "true"
+        new_supplier.products = "1,2,3,4"
+        new_supplier.rating = "6.6"
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        location = resp.headers.get('Location')
+        self.assertNotEqual(location, None)
+        new_json = resp.get_json()
+        self.assertEqual(new_json['name'], new_supplier.name)
+        self.assertEqual(new_json['like_count'], 15)
+        self.assertEqual(new_json['products'], [1,2,3,4])
+        self.assertEqual(new_json['rating'], 6.6)
+        self.assertEqual(new_json['is_active'], True)
+        # check that count has gone up and includes sammy
+        resp = self.app.get('/suppliers')
+        data = resp.get_json()
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        self.assertEqual(len(data), supplier_count + 1)
+
+
+    def test_create_supplier_with_string_fields_bad_data(self):
+        """ Create a new Supplier with bad data"""
+        supplier_count = self.get_supplier_count()
+        new_supplier = SupplierFactory()
+        new_supplier.like_count = ""
+        new_supplier.is_active = "james"
+        new_supplier.products = ""
+        new_supplier.rating = ""
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        location = resp.headers.get('Location')
+        self.assertNotEqual(location, None)
+        new_json = resp.get_json()
+        self.assertEqual(new_json['name'], new_supplier.name)
+        self.assertEqual(new_json['like_count'], "")
+        self.assertEqual(new_json['products'], [])
+        self.assertEqual(new_json['rating'], "")
+        self.assertEqual(new_json['is_active'], False)
+        # check that count has gone up and includes sammy
+        resp = self.app.get('/suppliers')
+        data = resp.get_json()
         self.assertEqual(resp.status_code, HTTP_200_OK)
         self.assertEqual(len(data), supplier_count + 1)
 
@@ -287,11 +338,55 @@ class TestService(unittest.TestCase):
 
 
     def test_update_supplier_not_found(self):
-        """Update a Supplier that does not exist"""
+        """ Update a Supplier that does not exist """
         new_supplier = SupplierFactory()
         resp = self.app.put('/suppliers/0', json=new_supplier.serialize(),
                             content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_404_NOT_FOUND)
+
+
+    def test_update_supplier_with_string_fields(self):
+        """ Update a Supplier with string fields """
+        test_supplier = self._create_suppliers(1)[0]
+        test_supplier.name = "test_update"
+        test_supplier.like_count = "15"
+        test_supplier.is_active = "true"
+        test_supplier.products = "1,2,3,4"
+        test_supplier.rating = "6.6"
+        resp = self.app.put('/suppliers/{}'.format(test_supplier.id),
+                            json=test_supplier.serialize(), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        resp = self.app.get('/suppliers/{}'.format(test_supplier.id),
+                            content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['name'], 'test_update')
+        self.assertEqual(data['like_count'], 15)
+        self.assertEqual(data['is_active'], True)
+        self.assertEqual(data['products'], [1,2,3,4])
+        self.assertEqual(data['rating'], 6.6)
+
+
+    def test_update_supplier_with_string_fields_bad_data(self):
+        """ Update a Supplier with bad data """
+        test_supplier = self._create_suppliers(1)[0]
+        test_supplier.name = ""
+        test_supplier.like_count = ""
+        test_supplier.is_active = "james"
+        test_supplier.products = ""
+        test_supplier.rating = ""
+        resp = self.app.put('/suppliers/{}'.format(test_supplier.id),
+                            json=test_supplier.serialize(), content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        resp = self.app.get('/suppliers/{}'.format(test_supplier.id),
+                            content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data['name'], "")
+        self.assertEqual(data['like_count'], "")
+        self.assertEqual(data['is_active'], False)
+        self.assertEqual(data['products'], [])
+        self.assertEqual(data['rating'], "")
 
 
     def test_delete_supplier(self):

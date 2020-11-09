@@ -23,13 +23,19 @@ from . import app
 # Error handlers require app to be initialized so we must import
 # them only after we have initialized the Flask app instance
 
-@app.route('/')
-def hello():
-    """
-    Test the '/' path
-    """
-    return "Hello Supplier!"
+# @app.route('/')
+# def hello():
+#     """
+#     Test the '/' path
+#     """
+#     return "Hello Supplier!"
 
+@app.route('/')
+def index():
+    # data = '{name: <string>, category: <string>}'
+    # url = request.base_url + 'pets' # url_for('list_pets')
+    # return jsonify(name='Pet Demo REST API Service', version='1.0', url=url, data=data), status.HTTP_200_OK
+    return app.send_static_file('index.html')
 
 ######################################################################
 # RETRIEVE A SUPPLIER (READ)
@@ -57,7 +63,7 @@ def create_suppliers():
     This endpoint will create a Supplier based the data in the body that is posted
     """
     app.logger.info('Request to Create a Supplier...')
-    data = {}
+
     # Check for form submission data
     if request.headers.get('Content-Type') == 'application/x-www-form-urlencoded':
         app.logger.info('Getting data from form submit')
@@ -72,6 +78,9 @@ def create_suppliers():
         check_content_type('application/json')
         app.logger.info('Getting json data from API call')
         data = request.get_json()
+        # Data type transfer
+        data = data_type_transfer(data)
+
     app.logger.info(data)
     supplier = Supplier()
     supplier.deserialize(data)
@@ -97,7 +106,11 @@ def update_suppliers(supplier_id):
     supplier = Supplier.find(supplier_id)
     if not supplier:
         raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+
     data = request.get_json()
+    # Data type transfer
+    data = data_type_transfer(data)
+
     app.logger.info(data)
     supplier.deserialize(data)
     supplier.id = supplier_id
@@ -168,7 +181,7 @@ def delete_supplier(supplier_id):
 
 
 ######################################################################
-#  ACTION LIKE A SUPPLIER
+# ACTION LIKE A SUPPLIER
 ######################################################################
 @app.route('/suppliers/<supplier_id>/like', methods=['PUT'])
 def like_supplier(supplier_id):
@@ -201,6 +214,20 @@ def init_db(dbname="suppliers"):
 def data_reset():
     """ Removes all Suppliers from the database """
     Supplier.remove_all()
+
+
+def data_type_transfer(data):
+    """ Transfer string fields in submitted json data if necessary """
+    if isinstance(data['is_active'], str):
+        data['is_active'] = data['is_active'] in ["true", "True", "1"]
+    if data['like_count']: data['like_count'] = int(data['like_count'])
+    if isinstance(data['products'], str):
+        if data['products']:
+            data['products'] = [int(i) for i in data['products'].split(',') if i]
+        else:
+            data['products'] = []
+    if data['rating']: data['rating'] = float(data['rating'])
+    return data
 
 
 def check_content_type(content_type):

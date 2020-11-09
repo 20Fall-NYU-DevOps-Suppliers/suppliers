@@ -110,6 +110,32 @@ $(function() {
     });
 
     // ****************************************
+    // Like a Supplier
+    // ****************************************
+
+    $("#like-btn").click(function() {
+
+        console.log("Enter!!")
+        var supplier_id = $("#supplier_id").val();
+        var ajax = $.ajax({
+            type: "PUT",
+            url: "/suppliers/" + supplier_id + "/like",
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res) {
+            update_form_data(res)
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res) {
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
     // Retrieve a Supplier
     // ****************************************
 
@@ -215,11 +241,6 @@ $(function() {
                 queryString += 'rating=' + rating
             }
         }
-
-        console.log("products:")
-        console.log(products)
-        console.log("final query:")
-        console.log(queryString)
 
         var ajax = $.ajax({
             type: "GET",

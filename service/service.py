@@ -78,15 +78,8 @@ def create_suppliers():
         check_content_type('application/json')
         app.logger.info('Getting json data from API call')
         data = request.get_json()
-
         # Data type transfer
-        if isinstance(data['is_active'], str):
-            data['is_active'] = data['is_active'] in ["true", "True", "1"]
-        if data['like_count']: data['like_count'] = int(data['like_count'])
-        if isinstance(data['products'], str):
-            if data['products']: data['products'] = [int(i) for i in data['products'].split(',')]
-            else: data['products'] = []
-        if data['rating']: data['rating'] = float(data['rating'])
+        data = data_type_transfer(data)
 
     app.logger.info(data)
     supplier = Supplier()
@@ -113,7 +106,11 @@ def update_suppliers(supplier_id):
     supplier = Supplier.find(supplier_id)
     if not supplier:
         raise NotFound("Supplier with id '{}' was not found.".format(supplier_id))
+
     data = request.get_json()
+    # Data type transfer
+    data = data_type_transfer(data)
+
     app.logger.info(data)
     supplier.deserialize(data)
     supplier.id = supplier_id
@@ -217,6 +214,20 @@ def init_db(dbname="suppliers"):
 def data_reset():
     """ Removes all Suppliers from the database """
     Supplier.remove_all()
+
+
+def data_type_transfer(data):
+    """ Transfer string fields in submitted json data if necessary """
+    if isinstance(data['is_active'], str):
+        data['is_active'] = data['is_active'] in ["true", "True", "1"]
+    if data['like_count']: data['like_count'] = int(data['like_count'])
+    if isinstance(data['products'], str):
+        if data['products']:
+            data['products'] = [int(i) for i in data['products'].split(',') if i]
+        else:
+            data['products'] = []
+    if data['rating']: data['rating'] = float(data['rating'])
+    return data
 
 
 def check_content_type(content_type):

@@ -115,7 +115,6 @@ $(function() {
 
     $("#like-btn").click(function() {
 
-        console.log("Enter!!")
         var supplier_id = $("#supplier_id").val();
         var ajax = $.ajax({
             type: "PUT",

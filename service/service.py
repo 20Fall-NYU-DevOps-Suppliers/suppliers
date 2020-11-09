@@ -78,11 +78,14 @@ def create_suppliers():
         check_content_type('application/json')
         app.logger.info('Getting json data from API call')
         data = request.get_json()
-        app.logger.debug(data)
+
         # Data type transfer
-        data['is_active'] = data['is_active'] in ["true", "True", "1"]
+        if isinstance(data['is_active'], str):
+            data['is_active'] = data['is_active'] in ["true", "True", "1"]
         if data['like_count']: data['like_count'] = int(data['like_count'])
-        if data['products']: data['products'] = [int(i) for i in data['products'].split(',')]
+        if isinstance(data['products'], str):
+            if data['products']: data['products'] = [int(i) for i in data['products'].split(',')]
+            else: data['products'] = []
         if data['rating']: data['rating'] = float(data['rating'])
 
     app.logger.info(data)

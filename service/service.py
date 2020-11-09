@@ -63,7 +63,7 @@ def create_suppliers():
     This endpoint will create a Supplier based the data in the body that is posted
     """
     app.logger.info('Request to Create a Supplier...')
-    data = {}
+
     # Check for form submission data
     if request.headers.get('Content-Type') == 'application/x-www-form-urlencoded':
         app.logger.info('Getting data from form submit')
@@ -78,6 +78,13 @@ def create_suppliers():
         check_content_type('application/json')
         app.logger.info('Getting json data from API call')
         data = request.get_json()
+        app.logger.debug(data)
+        # Data type transfer
+        data['is_active'] = data['is_active'] in ["true", "True", "1"]
+        if data['like_count']: data['like_count'] = int(data['like_count'])
+        if data['products']: data['products'] = [int(i) for i in data['products'].split(',')]
+        if data['rating']: data['rating'] = float(data['rating'])
+
     app.logger.info(data)
     supplier = Supplier()
     supplier.deserialize(data)
@@ -174,7 +181,7 @@ def delete_supplier(supplier_id):
 
 
 ######################################################################
-#  ACTION LIKE A SUPPLIER
+# ACTION LIKE A SUPPLIER
 ######################################################################
 @app.route('/suppliers/<supplier_id>/like', methods=['PUT'])
 def like_supplier(supplier_id):

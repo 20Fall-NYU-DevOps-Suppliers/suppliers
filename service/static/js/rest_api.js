@@ -82,13 +82,14 @@ $(function() {
         var is_active = $("#supplier_is_active").val() == "true";
         var products = $("#supplier_products").val();
         var rating = $("#supplier_rating").val();
+        var supplier_id = $("#supplier_id").val();
 
         var data = {
             "name": name,
             "like_count": like_count,
             "is_active": is_active,
             "products": products,
-            "rating": rating
+            "rating": rating,
         };
 
         var ajax = $.ajax({

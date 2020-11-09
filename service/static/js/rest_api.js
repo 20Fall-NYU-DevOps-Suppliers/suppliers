@@ -89,7 +89,7 @@ $(function() {
             "like_count": like_count,
             "is_active": is_active,
             "products": products,
-            "rating": rating,
+            "rating": rating
         };
 
         var ajax = $.ajax({

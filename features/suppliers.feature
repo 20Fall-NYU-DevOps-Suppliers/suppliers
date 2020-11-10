@@ -40,3 +40,28 @@ Scenario: Create a Supplier
     And I should see "False" in the "is_active" dropdown
     And I should see "8.7" in the "rating" field
     And I should see "1,2,3" in the "products" field
+
+Scenario: Retrieve a Supplier
+    When I visit the "Home Page"
+    And I set the "name" to "supplier2"
+    And I set the "like_count" to "20"
+    And I select "False" in the "is_active" dropdown
+    And I set the "rating" to "7.0"
+    And I set the "products" to "3,4,8"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "name" field should be empty
+    And the "like_count" field should be empty
+    And the "rating" field should be empty
+    And the "products" field should be empty
+    When I paste the "id" field
+    And I press the "Retrieve" button
+    Then I should see "supplier2" in the "Name" field
+    And I should see "20" in the "like_count" field
+    And I should see "False" in the "is_active" dropdown
+    And I should see "7.0" in the "rating" field
+    And I should see "3,4,8" in the "products" field
+    And I should see the message "Success"

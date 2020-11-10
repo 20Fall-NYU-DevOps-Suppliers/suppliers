@@ -46,7 +46,7 @@ Scenario: Retrieve a Supplier
     And I set the "name" to "supplier2"
     And I set the "like_count" to "20"
     And I select "False" in the "is_active" dropdown
-    And I set the "rating" to "7.0"
+    And I set the "rating" to "7.1"
     And I set the "products" to "3,4,8"
     And I press the "Create" button
     Then I should see the message "Success"
@@ -62,6 +62,6 @@ Scenario: Retrieve a Supplier
     Then I should see "supplier2" in the "Name" field
     And I should see "20" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
-    And I should see "7.0" in the "rating" field
+    And I should see "7.1" in the "rating" field
     And I should see "3,4,8" in the "products" field
     And I should see the message "Success"

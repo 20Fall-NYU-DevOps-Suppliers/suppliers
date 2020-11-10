@@ -47,7 +47,7 @@ def step_impl(context):
         expect(context.resp.status_code).to_equal(201)
 
 
-@when('I visit the "home page"')
+@when('I visit the "Home Page"')
 def step_impl(context):
     """ Make a call to the base URL """
     context.driver.get(context.base_url)

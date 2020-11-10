@@ -47,7 +47,7 @@ def step_impl(context):
         expect(context.resp.status_code).to_equal(201)
 
 
-@when('I visit the "home page"')
+@when('I visit the "Home Page"')
 def step_impl(context):
     """ Make a call to the base URL """
     context.driver.get(context.base_url)
@@ -56,7 +56,7 @@ def step_impl(context):
 @then('I should see "{message}" in the title')
 def step_impl(context, message):
     """ Check the document title for a message """
-    expect(context.driver.page_source).to_contain(message)
+    expect(context.driver.title).to_contain(message)
 
 
 @then('I should not see "{message}"')

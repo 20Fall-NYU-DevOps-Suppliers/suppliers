@@ -126,4 +126,42 @@ Scenario: Update a Supplier
     When I press the "Clear" button
     And I press the "Search" button
     Then I should see "supplier5" in the results
-    Then I should not see "supplier1" in the results
+    And I should not see "supplier1" in the results
+
+Scenario: Query for Suppliers
+    When I visit the "Home Page"
+    And I set the "name" to "supplier1"
+    And I press the "Search" button
+    Then I should see "supplier1" in the "name" field
+    And I should see "10" in the "like_count" field
+    And I should see "True" in the "is_active" dropdown
+    And I should see "5.6" in the "rating" field
+    And I should see "1,2,3" in the "products" field
+    When I press the "Clear" button
+    And I change "like_count" to "25"
+    And I press the "Search" button
+    Then I should see "supplier3" in the results
+    And I should see "supplier4" in the results
+    And I should not see "supplier1" in the results
+    And I should not see "supplier2" in the results
+    When I press the "Clear" button
+    And I select "True" in the "is_active" dropdown
+    And I press the "Search" button
+    Then I should see "supplier1" in the results
+    And I should see "supplier2" in the results
+    And I should see "supplier4" in the results
+    And I should not see "supplier3" in the results
+    When I press the "Clear" button
+    And I change "rating" to "6.2"
+    And I press the "Search" button
+    Then I should see "supplier3" in the results
+    And I should see "supplier4" in the results
+    And I should not see "supplier1" in the results
+    And I should not see "supplier2" in the results
+    When I press the "Clear" button
+    And I change "products" to "5"
+    And I press the "Search" button
+    Then I should see "supplier2" in the results
+    And I should see "supplier4" in the results
+    And I should not see "supplier1" in the results
+    And I should not see "supplier3" in the results

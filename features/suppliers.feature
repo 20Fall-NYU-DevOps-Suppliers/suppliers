@@ -166,7 +166,7 @@ Scenario: Query for Suppliers
     And I should not see "supplier1" in the results
     And I should not see "supplier3" in the results
 
-Scenario: Create a Supplier
+Scenario: Delete a Supplier
     When I visit the "Home Page"
     And I set the "name" to "supplier6"
     And I set the "like_count" to "15"

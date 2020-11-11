@@ -104,18 +104,26 @@ Scenario: Update a Supplier
     And I press the "Search" button
     Then I should see "supplier1" in the "name" field
     And I should see "10" in the "like_count" field
-    And I should see "true" in the "is_active" dropdown
+    And I should see "True" in the "is_active" dropdown
     And I should see "5.6" in the "rating" field
     And I should see "1,2,3" in the "products" field
-    When I change "name" to "supplier10"
+    When I change "name" to "supplier5"
+    And I change "like_count" to "13"
+    And I select "False" in the "is_active" dropdown 
+    And I change "rating" to "4.3"
+    And I change "products" to "1,2,3,4,5"
     And I press the "Update" button
     Then I should see the message "Success"
     When I copy the "Id" field
     And I press the "Clear" button
     And I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "supplier10" in the "name" field
+    Then I should see "supplier5" in the "name" field
+    And I should see "13" in the "like_count" field
+    And I should see "False" in the "is_active" dropdown
+    And I should see "4.3" in the "rating" field
+    And I should see "1,2,3,4,5" in the "products" field
     When I press the "Clear" button
     And I press the "Search" button
-    Then I should see "supplier10" in the results
+    Then I should see "supplier5" in the results
     Then I should not see "supplier1" in the results

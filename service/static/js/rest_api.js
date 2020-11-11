@@ -11,10 +11,12 @@ $(function() {
         $("#supplier_like_count").val(res.like_count);
         $("#supplier_products").val(res.products);
         $("#supplier_rating").val(res.rating);
-        if (res.available == true) {
+        if (res.is_active == true) {
             $("#supplier_is_active").val("true");
-        } else {
+        } else if (res.is_active == false){
             $("#supplier_is_active").val("false");
+        } else {
+            $("#supplier_is_active").val("None");
         }
     }
 
@@ -41,9 +43,18 @@ $(function() {
 
         var name = $("#supplier_name").val();
         var like_count = $("#supplier_like_count").val();
-        var is_active = $("#supplier_is_active").val() == "true";
+        var is_active_str = $("#supplier_is_active").val();
         var products = $("#supplier_products").val();
         var rating = $("#supplier_rating").val();
+
+        var is_active;
+        if (is_active_str == "true"){
+            is_active = true;
+        } else if (is_active_str == "false"){
+            is_active = false;
+        } else {
+            is_active = null;
+        }
 
         var data = {
             "name": name,
@@ -79,10 +90,19 @@ $(function() {
 
         var name = $("#supplier_name").val();
         var like_count = $("#supplier_like_count").val();
-        var is_active = $("#supplier_is_active").val() == "true";
+        var is_active_str = $("#supplier_is_active").val();
         var products = $("#supplier_products").val();
         var rating = $("#supplier_rating").val();
         var supplier_id = $("#supplier_id").val();
+
+        var is_active;
+        if (is_active_str == "true"){
+            is_active = true;
+        } else if (is_active_str == "false"){
+            is_active = false;
+        } else {
+            is_active = null;
+        }
 
         var data = {
             "name": name,

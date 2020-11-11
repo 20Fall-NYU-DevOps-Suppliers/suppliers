@@ -165,3 +165,29 @@ Scenario: Query for Suppliers
     And I should see "supplier4" in the results
     And I should not see "supplier1" in the results
     And I should not see "supplier3" in the results
+
+Scenario: Create a Supplier
+    When I visit the "Home Page"
+    And I set the "name" to "supplier6"
+    And I set the "like_count" to "15"
+    And I select "False" in the "is_active" dropdown
+    And I set the "rating" to "9.0"
+    And I set the "products" to "1,2,3,4"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "name" field should be empty
+    And the "like_count" field should be empty
+    And the "rating" field should be empty
+    And the "products" field should be empty
+    When I paste the "id" field
+    And I press the "Delete" button
+    Then I should see the message "Supplier has been Deleted!"
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should not see "supplier6" in the results
+
+    
+    

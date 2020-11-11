@@ -89,3 +89,11 @@ Scenario: Create a Supplier
     And I should see "8.7" in the "rating" field
     And I should see "1,2,3" in the "products" field
     And I should see the message "Success"
+
+Scenario: List all Supplier
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "supplier1" in the results
+    And I should see "supplier2" in the results
+    And I should not see "supplier3" in the results
+    And I should see "supplier4" in the results

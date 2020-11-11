@@ -66,7 +66,7 @@ Scenario: Retrieve a Supplier
     And I should see "3,4,8" in the "products" field
     And I should see the message "Success"
 
-Scenario: Create a Supplier
+Scenario: Like a Supplier
     When I visit the "Home Page"
     And I set the "name" to "supplier1"
     And I set the "like_count" to "10"

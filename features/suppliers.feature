@@ -35,7 +35,7 @@ Scenario: Create a Supplier
     And the "products" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "supplier1" in the "Name" field
+    Then I should see "supplier1" in the "name" field
     And I should see "10" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
     And I should see "8.7" in the "rating" field
@@ -59,7 +59,7 @@ Scenario: Retrieve a Supplier
     And the "products" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "supplier2" in the "Name" field
+    Then I should see "supplier2" in the "name" field
     And I should see "20" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
     And I should see "7.1" in the "rating" field
@@ -83,17 +83,47 @@ Scenario: Like a Supplier
     And the "products" field should be empty
     When I paste the "id" field
     And I press the "Like" button
-    Then I should see "supplier1" in the "Name" field
+    Then I should see "supplier1" in the "name" field
     And I should see "11" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
     And I should see "8.7" in the "rating" field
     And I should see "1,2,3" in the "products" field
     And I should see the message "Success"
 
-Scenario: List all Supplier
+Scenario: List all Suppliers
     When I visit the "Home Page"
     And I press the "Search" button
     Then I should see "supplier1" in the results
     And I should see "supplier2" in the results
     And I should not see "supplier3" in the results
     And I should see "supplier4" in the results
+
+Scenario: Update a Supplier
+    When I visit the "Home Page"
+    And I set the "name" to "supplier1"
+    And I press the "Search" button
+    Then I should see "supplier1" in the "name" field
+    And I should see "10" in the "like_count" field
+    And I should see "True" in the "is_active" dropdown
+    And I should see "5.6" in the "rating" field
+    And I should see "1,2,3" in the "products" field
+    When I change "name" to "supplier5"
+    And I change "like_count" to "13"
+    And I select "False" in the "is_active" dropdown 
+    And I change "rating" to "4.3"
+    And I change "products" to "1,2,3,4,5"
+    And I press the "Update" button
+    Then I should see the message "Success"
+    When I copy the "Id" field
+    And I press the "Clear" button
+    And I paste the "Id" field
+    And I press the "Retrieve" button
+    Then I should see "supplier5" in the "name" field
+    And I should see "13" in the "like_count" field
+    And I should see "False" in the "is_active" dropdown
+    And I should see "4.3" in the "rating" field
+    And I should see "1,2,3,4,5" in the "products" field
+    When I press the "Clear" button
+    And I press the "Search" button
+    Then I should see "supplier5" in the results
+    Then I should not see "supplier1" in the results

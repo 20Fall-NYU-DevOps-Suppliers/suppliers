@@ -19,7 +19,7 @@ Scenario: The server is running
 
 Scenario: Create a Supplier
     When I visit the "Home Page"
-    And I set the "name" to "supplier1"
+    And I set the "name" to "supplier5"
     And I set the "like_count" to "10"
     And I select "False" in the "is_active" dropdown
     And I set the "rating" to "8.7"
@@ -35,7 +35,7 @@ Scenario: Create a Supplier
     And the "products" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "supplier1" in the "name" field
+    Then I should see "supplier5" in the "name" field
     And I should see "10" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
     And I should see "8.7" in the "rating" field
@@ -43,7 +43,7 @@ Scenario: Create a Supplier
 
 Scenario: Retrieve a Supplier
     When I visit the "Home Page"
-    And I set the "name" to "supplier2"
+    And I set the "name" to "supplier6"
     And I set the "like_count" to "20"
     And I select "False" in the "is_active" dropdown
     And I set the "rating" to "7.1"
@@ -59,7 +59,7 @@ Scenario: Retrieve a Supplier
     And the "products" field should be empty
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "supplier2" in the "name" field
+    Then I should see "supplier6" in the "name" field
     And I should see "20" in the "like_count" field
     And I should see "False" in the "is_active" dropdown
     And I should see "7.1" in the "rating" field
@@ -69,24 +69,20 @@ Scenario: Retrieve a Supplier
 Scenario: Like a Supplier
     When I visit the "Home Page"
     And I set the "name" to "supplier1"
-    And I set the "like_count" to "10"
-    And I select "False" in the "is_active" dropdown
-    And I set the "rating" to "8.7"
-    And I set the "products" to "1,2,3"
-    And I press the "Create" button
-    When I copy the "id" field
+    And I press the "Search" button
+    Then I should see "supplier1" in the "name" field
+    And I should see "10" in the "like_count" field
+    And I should see "True" in the "is_active" dropdown
+    And I should see "5.6" in the "rating" field
+    And I should see "1,2,3" in the "products" field
+    When I copy the "Id" field
     And I press the "Clear" button
-    Then the "id" field should be empty
-    And the "name" field should be empty
-    And the "like_count" field should be empty
-    And the "rating" field should be empty
-    And the "products" field should be empty
-    When I paste the "id" field
+    And I paste the "Id" field
     And I press the "Like" button
     Then I should see "supplier1" in the "name" field
     And I should see "11" in the "like_count" field
-    And I should see "False" in the "is_active" dropdown
-    And I should see "8.7" in the "rating" field
+    And I should see "True" in the "is_active" dropdown
+    And I should see "5.6" in the "rating" field
     And I should see "1,2,3" in the "products" field
     And I should see the message "Success"
 
@@ -188,6 +184,3 @@ Scenario: Delete a Supplier
     When I press the "Clear" button
     And I press the "Search" button
     Then I should not see "supplier6" in the results
-
-    
-    

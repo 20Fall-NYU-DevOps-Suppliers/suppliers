@@ -232,10 +232,10 @@ class SupplierResource(Resource):
 
 
     #------------------------------------------------------------------
-    # DELETE A PET
+    # DELETE A SUPPLIER
     #------------------------------------------------------------------
-    @api.doc('delete_pets', security='apikey')
-    @api.response(204, 'Pet deleted')
+    @api.doc('delete_supplier', security='apikey')
+    @api.response(204, 'Supplier deleted')
     def delete(self, supplier_id):
         """
         Delete a Supplier
@@ -260,7 +260,7 @@ class SupplierCollection(Resource):
     #------------------------------------------------------------------
     # LIST ALL SUPPLIERS
     #------------------------------------------------------------------
-    @api.doc('list_pets')
+    @api.doc('list_suppliers')
     @api.response(400, 'Bad Request')
     @api.expect(supplier_args, validate=True)
     # @api.marshal_list_with(supplier_model)

@@ -53,9 +53,15 @@ class TestService(unittest.TestCase):
         return suppliers
 
 
-    def test_hello(self):
-        """ Test the index page """
+    def test_home_page(self):
+        """ Test the home page """
         resp = self.app.get('/')
+        self.assertEqual(resp.status_code, HTTP_200_OK)
+
+
+    def test_healthcheck(self):
+        """ Test the healthcheck page """
+        resp = self.app.get('/healthcheck')
         self.assertEqual(resp.status_code, HTTP_200_OK)
 
 

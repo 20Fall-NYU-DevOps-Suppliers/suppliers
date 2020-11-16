@@ -29,7 +29,7 @@ before_script:
   - curl -I http://localhost:5000/  # make sure the service is up
 
 script:
-  - nosetestschromedriver
+  - nosetests
   - behave
 
 after_success:

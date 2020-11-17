@@ -43,6 +43,16 @@ To run the TDD tests please run the following commands:
  cd /vagrant
  nosetests
 ```
+To run the BDD tests please run the following commands:
+```
+ git clone https://github.com/20Fall-NYU-DevOps-Suppliers/suppliers.git
+ cd suppliers
+ vagrant up
+ vagrant ssh
+ cd /vagrant
+ honcho start &
+ behave
+```
 
 ### Running the Flask App:
 ```

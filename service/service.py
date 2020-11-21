@@ -9,6 +9,7 @@ POST /suppliers - creates a new Supplier record in the database
 PUT /suppliers/{id} - updates a Supplier record in the database
 DELETE /suppliers/{id} - deletes a Supplier record in the database
 ACTION /suppliers/{id}/like - increments the like count of the Supplier
+ACTION /suppliers/{product_id}/recommend - recommend top 1 highly-rated supplier based on a given product
 """
 
 import sys
@@ -349,7 +350,7 @@ class SupplierCollection(Resource):
 # PATH: /suppliers/{supplier_id}/like
 ######################################################################
 @api.route('/suppliers/<supplier_id>/like')
-class SupplierAction(Resource):
+class SupplierLike(Resource):
     @api.doc('like_suppliers')
     @api.response(404, 'Supplier not found')
     def put(self, supplier_id):
@@ -364,6 +365,31 @@ class SupplierAction(Resource):
         supplier.save()
         app.logger.info('You liked supplier with id [%s]!', supplier.id)
         return supplier.serialize(), status.HTTP_200_OK
+
+
+######################################################################
+# PATH: /suppliers/{product_id}/recommend
+######################################################################
+@api.route('/suppliers/<product_id>/recommend')
+class SupplierRecommend(Resource):
+    @api.doc('recommend_suppliers')
+    def get(self, product_id):
+        """
+        Recommend a Supplier
+        This endpoint will recommend top 1 highly-rated supplier based on a given product
+        """
+        app.logger.info('Recommend suppliers containing product with id %s in their products',
+                        product_id)
+        product_id = int(product_id)
+
+        # retrieve all suppliers including this product first
+        suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
+
+        # get top 1 rated supplier, None if suppliers is empty
+        if suppliers: res_supplier = max(suppliers, key = lambda x: x.rating).serialize()
+        else: res_supplier = []
+
+        return res_supplier, status.HTTP_200_OK
 
 
 ######################################################################

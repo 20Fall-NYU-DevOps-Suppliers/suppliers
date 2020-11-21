@@ -9,6 +9,7 @@ POST /suppliers - creates a new Supplier record in the database
 PUT /suppliers/{id} - updates a Supplier record in the database
 DELETE /suppliers/{id} - deletes a Supplier record in the database
 ACTION /suppliers/{id}/like - increments the like count of the Supplier
+ACTION /suppliers/{product_id}/recommend - recommend top 1 highly-rated supplier based on a given product
 """
 
 import sys

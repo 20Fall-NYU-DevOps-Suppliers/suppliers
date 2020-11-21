@@ -386,8 +386,10 @@ class SupplierRecommend(Resource):
         suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
 
         # get top 1 rated supplier, None if suppliers is empty
-        if suppliers: res_supplier = max(suppliers, key = lambda x: x.rating).serialize()
-        else: res_supplier = []
+        if suppliers:
+            res_supplier = max(suppliers, key=lambda x: x.rating).serialize()
+        else:
+            res_supplier = []
 
         return res_supplier, status.HTTP_200_OK
 

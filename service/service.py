@@ -36,6 +36,8 @@ authorizations = {
     }
 }
 
+# initialize DB without @app.before_first_request, to prevent nosetests using supplier DB
+Supplier.init_db("suppliers")
 
 ######################################################################
 # GET HOME PAGE
@@ -397,13 +399,6 @@ class SupplierRecommend(Resource):
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
-
-@app.before_first_request
-def init_db(dbname="suppliers"):
-    """ Initlaize the model """
-    Supplier.init_db(dbname)
-
 
 def data_reset():
     """ Removes all Suppliers from the database """

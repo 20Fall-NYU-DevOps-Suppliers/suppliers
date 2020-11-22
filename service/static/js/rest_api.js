@@ -13,7 +13,7 @@ $(function() {
         $("#supplier_rating").val(res.rating);
         if (res.is_active == true) {
             $("#supplier_is_active").val("true");
-        } else if (res.is_active == false){
+        } else if (res.is_active == false) {
             $("#supplier_is_active").val("false");
         } else {
             $("#supplier_is_active").val("None");
@@ -48,9 +48,9 @@ $(function() {
         var rating = $("#supplier_rating").val();
 
         var is_active;
-        if (is_active_str == "true"){
+        if (is_active_str == "true") {
             is_active = true;
-        } else if (is_active_str == "false"){
+        } else if (is_active_str == "false") {
             is_active = false;
         } else {
             is_active = null;
@@ -96,9 +96,9 @@ $(function() {
         var supplier_id = $("#supplier_id").val();
 
         var is_active;
-        if (is_active_str == "true"){
+        if (is_active_str == "true") {
             is_active = true;
-        } else if (is_active_str == "false"){
+        } else if (is_active_str == "false") {
             is_active = false;
         } else {
             is_active = null;
@@ -231,9 +231,9 @@ $(function() {
         var queryString = ""
 
         var is_active;
-        if (is_active_str == "true"){
+        if (is_active_str == "true") {
             is_active = true;
-        } else if (is_active_str == "false"){
+        } else if (is_active_str == "false") {
             is_active = false;
         } else {
             is_active = null;
@@ -250,7 +250,7 @@ $(function() {
                 queryString += 'like_count=' + like_count
             }
         }
-        if (is_active!=null) {
+        if (is_active != null) {
             if (queryString.length > 0) {
                 queryString += '&is_active=' + is_active
             } else {
@@ -313,6 +313,54 @@ $(function() {
         });
 
         ajax.fail(function(res) {
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // Recommend a Supplier
+    // ****************************************
+
+    $("#recommend-btn").click(function() {
+
+        var product_id = $("#supplier_products").val();
+
+        var ajax = $.ajax({
+            type: "GET",
+            url: "/suppliers/" + product_id + "/recommend",
+            contentType: "application/json",
+            data: ''
+        })
+
+        ajax.done(function(res) {
+            $("#search_results").empty();
+            $("#search_results").append('<table class="table-striped" cellpadding="10">');
+            var header = '<tr>'
+            header += '<th style="width:10%">ID</th>'
+            header += '<th style="width:10%">Name</th>'
+            header += '<th style="width:10%">Like_count</th>'
+            header += '<th style="width:10%">Is_active</th>'
+            header += '<th style="width:10%">Products</th>'
+            header += '<th style="width:10%">Rating</th></tr>'
+            $("#search_results").append(header);
+
+            var supplier = res;
+            if (supplier != "") {
+                console.log("supplier is: " + supplier._id + "," + supplier.name + "," + supplier.products)
+                var row = "<tr><td>" + supplier._id + "</td><td>" + supplier.name + "</td><td>" + supplier.like_count + "</td><td>" + supplier.is_active + "</td><td>" +
+                    supplier.products + "</td><td>" + supplier.rating + "</td></tr>";
+                $("#search_results").append(row);
+                $("#search_results").append('</table>');
+                update_form_data(supplier)
+            }
+
+            flash_message("Success")
+        });
+
+
+        ajax.fail(function(res) {
+            clear_form_data()
             flash_message(res.responseJSON.message)
         });
 

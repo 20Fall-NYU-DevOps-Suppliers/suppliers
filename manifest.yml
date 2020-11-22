@@ -5,8 +5,8 @@ applications:
   path: .
   instances: 2
   memory: 64M
-  routes:
-  - route: nyu-supplier-service-f20.us-south.cf.appdomain.cloud
+  host: nyu-supplier-service-f20
+  domain: us-south.cf.appdomain.cloud  
   disk_quota: 1024M
   buildpacks: 
   - python_buildpack

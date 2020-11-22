@@ -9,7 +9,8 @@ import unittest
 import logging
 from flask_api import status
 from werkzeug.datastructures import MultiDict, ImmutableMultiDict
-from service import service
+from service.service import initialize_logging, app
+from service.models import Supplier
 from .suppliers_factory import SupplierFactory
 
 # Status Codes
@@ -30,10 +31,10 @@ class TestService(unittest.TestCase):
 
 
     def setUp(self):
-        self.app = service.app.test_client()
-        service.initialize_logging(logging.INFO)
-        service.init_db("test")
-        service.data_reset()
+        self.app = app.test_client()
+        initialize_logging(logging.INFO)
+        Supplier.init_db("test")
+        Supplier.remove_all()
 
 
     def _create_suppliers(self, count):

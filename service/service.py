@@ -383,7 +383,7 @@ class SupplierRecommend(Resource):
         product_id = int(product_id)
 
         # retrieve all suppliers including this product first
-        suppliers = [supplier for supplier in Supplier.all() if product_id in supplier.products]
+        suppliers = [supplier for supplier in Supplier.all() if (product_id in supplier.products and supplier.is_active == True)]
 
         # get top 1 rated supplier, None if suppliers is empty
         if suppliers:

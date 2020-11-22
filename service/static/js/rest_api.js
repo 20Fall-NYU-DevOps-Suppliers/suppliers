@@ -334,10 +334,30 @@ $(function() {
         })
 
         ajax.done(function(res) {
-            //alert(res.toSource())
-            update_form_data(res)
+            $("#search_results").empty();
+            $("#search_results").append('<table class="table-striped" cellpadding="10">');
+            var header = '<tr>'
+            header += '<th style="width:10%">ID</th>'
+            header += '<th style="width:10%">Name</th>'
+            header += '<th style="width:10%">Like_count</th>'
+            header += '<th style="width:10%">Is_active</th>'
+            header += '<th style="width:10%">Products</th>'
+            header += '<th style="width:10%">Rating</th></tr>'
+            $("#search_results").append(header);
+
+            var supplier = res;
+            if (supplier != "") {
+                console.log("supplier is: " + supplier._id + "," + supplier.name + "," + supplier.products)
+                var row = "<tr><td>" + supplier._id + "</td><td>" + supplier.name + "</td><td>" + supplier.like_count + "</td><td>" + supplier.is_active + "</td><td>" +
+                    supplier.products + "</td><td>" + supplier.rating + "</td></tr>";
+                $("#search_results").append(row);
+                $("#search_results").append('</table>');
+                update_form_data(supplier)
+            }
+
             flash_message("Success")
         });
+
 
         ajax.fail(function(res) {
             clear_form_data()

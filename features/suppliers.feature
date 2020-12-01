@@ -187,18 +187,24 @@ Scenario: Delete a Supplier
 
 Scenario: Recommend a Supplier
    When I visit the "Home Page"
-   And I set the "name" to "supplier8"
+   And I set the "name" to "supplier6"
    And I set the "like_count" to "15"
    And I select "True" in the "is_active" dropdown
    And I set the "rating" to "6.0"
-   And I set the "products" to "4"
+   And I set the "products" to "1,2,4"
    And I press the "Create" button
    Then I should see the message "Success"
-   When I set the "name" to "supplier9"
+   When I set the "name" to "supplier7"
    And I set the "like_count" to "15"
    And I select "True" in the "is_active" dropdown
    And I set the "rating" to "15.0"
-   And I set the "products" to "4"
+   And I set the "products" to "3,4,5"
+   And I press the "Create" button
+   When I set the "name" to "supplier8"
+   And I set the "like_count" to "15"
+   And I select "False" in the "is_active" dropdown
+   And I set the "rating" to "20.0"
+   And I set the "products" to "1,3,4"
    And I press the "Create" button
    Then I should see the message "Success"
    When I press the "Clear" button
@@ -209,7 +215,7 @@ Scenario: Recommend a Supplier
    And the "products" field should be empty
    When I set the "products" to "4"
    And I press the "Recommend" button
-   Then I should see "supplier9" in the results
+   Then I should see "supplier7" in the results
    And I should see the message "Success"
   
 

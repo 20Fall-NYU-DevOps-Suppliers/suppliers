@@ -187,6 +187,14 @@ Scenario: Delete a Supplier
 
 Scenario: Recommend a Supplier
    When I visit the "Home Page"
+   And I set the "name" to "supplier6"
+   And I set the "like_count" to "15"
+   And I select "False" in the "is_active" dropdown
+   And I set the "rating" to "10.0"
+   And I set the "products" to "1,2,4"
+   And I press the "Create" button
+   Then I should see the message "Success"
+   When I press the "Clear" button
    And I set the "products" to "4"
    And I press the "Recommend" button
    Then I should see "supplier4" in the results

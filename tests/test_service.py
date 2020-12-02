@@ -423,7 +423,7 @@ class TestService(unittest.TestCase):
         new_count = self.get_supplier_count()
         self.assertEqual(new_count, len(test_suppliers))
 
-    def test_action_recommend_supplier(self):
+    def test_action_is_active_recommend_supplier(self):
         """ Recommend a supplier """
         self._create_suppliers(5)
         new_supplier = SupplierFactory()
@@ -444,6 +444,36 @@ class TestService(unittest.TestCase):
         resp = self.app.get('/suppliers/7/recommend')
         supplier = resp.get_json()
         self.assertEqual(supplier, [])
+
+    def test_action_is_inactive_recommend_supplier(self):
+        """ Recommend an active supplier """
+        self._create_suppliers(4)
+        new_supplier = SupplierFactory()
+        new_supplier.name = "highly_rated_active_supplier"
+        new_supplier.like_count = "15"
+        new_supplier.is_active = "true"
+        new_supplier.products = "1,2,3,4"
+        new_supplier.rating = "9.8"
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        new_supplier1 = SupplierFactory()
+        new_supplier1.name = "highly_rated_inactive_supplier"
+        new_supplier1.like_count = "15"
+        new_supplier1.is_active = "true"
+        new_supplier1.products = "1,2,3,4"
+        new_supplier1.rating = "10.0"
+        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+                             content_type='application/json')
+        self.assertEqual(resp.status_code, HTTP_201_CREATED)
+        resp = self.app.get('/suppliers/3/recommend')
+        supplier = resp.get_json()
+        self.assertEqual(supplier['name'], 'highly_rated_active_supplier')
+        self.assertEqual(supplier['rating'], 9.8)
+        self.assertEqual(supplier['products'], [1, 2, 3, 4])
+
+
+
 
 
 ######################################################################

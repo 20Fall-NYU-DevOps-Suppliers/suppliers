@@ -460,10 +460,10 @@ class TestService(unittest.TestCase):
         new_supplier1 = SupplierFactory()
         new_supplier1.name = "highly_rated_inactive_supplier"
         new_supplier1.like_count = "15"
-        new_supplier1.is_active = "true"
+        new_supplier1.is_active = "false"
         new_supplier1.products = "1,2,3,4"
         new_supplier1.rating = "10.0"
-        resp = self.app.post('/suppliers', json=new_supplier.serialize(),
+        resp = self.app.post('/suppliers', json=new_supplier1.serialize(),
                              content_type='application/json')
         self.assertEqual(resp.status_code, HTTP_201_CREATED)
         resp = self.app.get('/suppliers/3/recommend')

@@ -4,8 +4,17 @@
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 ###  Project description
-The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology.
+The purpose of this project is to develop a suppliers system for an eCommerce web site backend as a collection RESTful services for a client by adopting DevOps methodology. The final app is hosted on IBM Cloud with CI Delivery Pipeline.
 
+### How to access
+Running on IBM Cloud in Prod:  
+https://nyu-supplier-service-f20.us-south.cf.appdomain.cloud/
+
+Running on IBM Cloud in Dev:  
+https://nyu-supplier-service-f20-dev.us-south.cf.appdomain.cloud/
+
+DevOps Pipeline in IBM Cloud:   
+https://cloud.ibm.com/devops/pipelines/ef96a14c-654e-4e73-9db9-29441086c0a8?env_id=ibm:yp:us-south
 
 ## API Documentation
 
@@ -13,7 +22,7 @@ The purpose of this project is to develop a suppliers system for an eCommerce we
 
 |  Column  |  Type  |
 | :----------: | :---------: |
-| supplier_id | String |
+| supplier_id | String(24 hexadecimal characters) |
 | name | String |
 | like_count | Integer |
 | is_active | Boolean |
@@ -23,15 +32,14 @@ The purpose of this project is to develop a suppliers system for an eCommerce we
 ### URLs
 | HTTP Method | URL | Description | Return
 | :--- | :--- | :--- | :--- |
-| `GET` | `/suppliers/{id}` | Get Supplier by ID | Supplier Object
 | `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
+| `GET` | `/suppliers?{conditions}` | Query for suppliers with multiple conditions | Supplier Object
+| `GET` | `/suppliers/{id}` | Get Supplier by ID | Supplier Object
 | `POST` | `/suppliers` | Creates a new Supplier record in the database | Supplier Object
 | `PUT` | `/suppliers/{id}` | Updates a Supplier record in the database | Supplier Object
-| `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
-| `PUT` | `/suppliers/{id}/like` | Increment the like count of the Supplier with the given id number | Supplier Object
 | `DELETE` | `/suppliers/{id}` | Delete the Supplier with the given id number | 204 Status Code 
-
-\<supplierID\> is a string of 24 hexadecimal characters eg: 1e8392f4e6752990a2c23789
+| `PUT` | `/suppliers/{id}/like` | Increment the like count of the Supplier with the given id number | Supplier Object
+| `GET` | `/suppliers/<product_id>/recommend` | Recommend the top 1 highly-rated active supplier containing product_id in their products | Supplier Object
 
 ### Manually Running The Tests
 To run the TDD tests please run the following commands:
@@ -62,7 +70,7 @@ To run the BDD tests please run the following commands:
  FLASK_APP=service:app flask run -h 0.0.0.0
 ```
 
-Then the service will available at: http://0.0.0.0:5000/suppliers
+Then the service will available at: http://127.0.0.1:5000/suppliers
 
 ### Checking The Pylint Score:
 ```

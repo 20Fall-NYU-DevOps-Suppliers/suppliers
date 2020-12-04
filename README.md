@@ -37,7 +37,7 @@ https://cloud.ibm.com/devops/pipelines/ef96a14c-654e-4e73-9db9-29441086c0a8?env_
 | `PUT` | `/suppliers/{id}` | Updates a Supplier record in the database | Supplier Object
 | `DELETE` | `/suppliers/{id}` | Delete the Supplier with the given id number | 204 Status Code 
 | `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
-| `GET` | `/suppliers` | Query for suppliers with multiple conditions | Supplier Object
+| `GET` | `/suppliers?{conditions}` | Query for suppliers with multiple conditions | Supplier Object
 | `PUT` | `/suppliers/{id}/like` | Increment the like count of the Supplier with the given id number | Supplier Object
 | `GET` | `/suppliers/<product_id>/recommend` | Recommend the top 1 highly-rated supplier containing product_id in their products | Supplier Object
 

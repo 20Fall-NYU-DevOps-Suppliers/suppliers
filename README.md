@@ -22,7 +22,7 @@ https://cloud.ibm.com/devops/pipelines/ef96a14c-654e-4e73-9db9-29441086c0a8?env_
 
 |  Column  |  Type  |
 | :----------: | :---------: |
-| supplier_id | String |
+| supplier_id | String(24 hexadecimal characters) |
 | name | String |
 | like_count | Integer |
 | is_active | Boolean |
@@ -32,16 +32,14 @@ https://cloud.ibm.com/devops/pipelines/ef96a14c-654e-4e73-9db9-29441086c0a8?env_
 ### URLs
 | HTTP Method | URL | Description | Return
 | :--- | :--- | :--- | :--- |
-| `POST` | `/suppliers` | Creates a new Supplier record in the database | Supplier Object
-| `GET` | `/suppliers/{id}` | Get Supplier by ID | Supplier Object
-| `PUT` | `/suppliers/{id}` | Updates a Supplier record in the database | Supplier Object
-| `DELETE` | `/suppliers/{id}` | Delete the Supplier with the given id number | 204 Status Code 
 | `GET` | `/suppliers` | Returns a list of all the Suppliers | Supplier Object
 | `GET` | `/suppliers?{conditions}` | Query for suppliers with multiple conditions | Supplier Object
+| `GET` | `/suppliers/{id}` | Get Supplier by ID | Supplier Object
+| `POST` | `/suppliers` | Creates a new Supplier record in the database | Supplier Object
+| `PUT` | `/suppliers/{id}` | Updates a Supplier record in the database | Supplier Object
+| `DELETE` | `/suppliers/{id}` | Delete the Supplier with the given id number | 204 Status Code 
 | `PUT` | `/suppliers/{id}/like` | Increment the like count of the Supplier with the given id number | Supplier Object
-| `GET` | `/suppliers/<product_id>/recommend` | Recommend the top 1 highly-rated supplier containing product_id in their products | Supplier Object
-
-\<supplierID\> is a string of 24 hexadecimal characters eg: 1e8392f4e6752990a2c23789
+| `GET` | `/suppliers/<product_id>/recommend` | Recommend the top 1 highly-rated active supplier containing product_id in their products | Supplier Object
 
 ### Manually Running The Tests
 To run the TDD tests please run the following commands:
